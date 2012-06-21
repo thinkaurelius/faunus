@@ -110,7 +110,7 @@ footer p {
 
 a {
   text-decoration: none;
-  color: #007edf;
+  color: rgb(213,26,17); /*#007edf;*/
   text-shadow: none;
 
   transition: color 0.5s ease;
@@ -126,12 +126,12 @@ a {
 }
 
 #main_content a:hover {
-  color: #0069ba;
-  text-shadow: #0090ff 0px 0px 2px;
+  color: rgb(213,26,17);
+  text-shadow: rgb(213,26,17) 0px 0px 2px;
 }
 
 footer a:hover {
-  color: #43adff;
+  color: rgb(213,26,17)
   text-shadow: #0090ff 0px 0px 2px;
 }
 
@@ -146,16 +146,10 @@ strong {
 img {
   position: relative;
   margin: 0 auto;
-  max-width: 739px;
-  padding: 5px;
-  margin: 10px 0 10px 0;
-  border: 1px solid #ebebeb;
-
-  box-shadow: 0 0 5px #ebebeb;
-  -webkit-box-shadow: 0 0 5px #ebebeb;
-  -moz-box-shadow: 0 0 5px #ebebeb;
-  -o-box-shadow: 0 0 5px #ebebeb;
-  -ms-box-shadow: 0 0 5px #ebebeb;
+  /**max-width: 475px;**/
+  padding: 0px;
+  margin: 0px 0px 0px 0px;
+  border: 0px;
 }
 
 pre, code {
@@ -257,11 +251,6 @@ form {
   padding: 20px;
 }
 
-img {
-  width: 100%;
-  max-width: 100%;
-}
-
 /*******************************************************************************
 Full-Width Styles
 *******************************************************************************/
@@ -285,7 +274,7 @@ Full-Width Styles
   z-index: 10;
   padding: 10px 50px 10px 10px;
   color: #fff;
-  background: url('../images/blacktocat.png') #0090ff no-repeat 95% 50%;
+  background: url('../images/aurelius-icon.png') rgb(213,26,17) /*#0090ff*/ no-repeat 95% 50%;
   font-weight: 700;
   box-shadow: 0 0 10px rgba(0,0,0,.5);
   border-bottom-left-radius: 2px;
@@ -328,7 +317,7 @@ Full-Width Styles
   bottom: -40px;
   right: 0;
   height: 70px;
-  background: url('../images/icon_download.png') no-repeat 0% 90%;
+  /**background: url('../images/icon_download.png') no-repeat 0% 90%;**/
 }
 
 .zip_download_link {
