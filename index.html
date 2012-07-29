@@ -21,7 +21,7 @@
           <h1 id="project_title">Faunus</h1>
           <h2 id="project_tagline">A Library of Graph-Based Hadoop Tools</h2>
           <!--<section id="downloads">                                                                                                                  
-              <a class="zip_download_link" href="https://github.com/downloads/thinkaurelius/titan/titan-0.1-alpha.zip">Download this project as a .zip file</a>              
+              <a class="zip_download_link" href="https://github.com/downloads/thinkaurelius/faunus/faunus-0.1-alpha.zip">Download this project as a .zip file</a>              
           </section>-->
         </header>
     </div>
@@ -35,15 +35,21 @@
 	
 <!----->
 
-<p>Faunus is a library for processing graphs using <a href="http://hadoop.apache.org/">Hadoop</a>'s <a href="http://hadoop.apache.org/mapreduce/">MapReduce</a> framework. Faunus provides operators that implement a <a href="http://arxiv.org/abs/0806.2274">property graph algebra</a> that can be used to process massive scale graphs.</p>
+<p>Faunus is a framework for processing <a href="https://github.com/tinkerpop/blueprints/wiki/Property-Graph-Model">property graphs</a> using <a href="http://hadoop.apache.org/">Hadoop</a>. A vertex-centric, <a href="http://en.wikipedia.org/wiki/Adjacency_list">adjacency list</a> data structure is used whereby every record is a single vertex along with its incident edges. This vertex-centric data structure is then processed using map-steps (e.g. filters, mutations) and reduce-steps (e.g. traversals). MapReduce operations are provided that implement a <a href="http://arxiv.org/abs/0806.2274">property graph algebra</a> for doing graph derivations and basic graph statistics. Faunus can be extended with new operations written using <a href="http://hadoop.apache.org/mapreduce/">MapReduce</a> and <a href="http://blueprints.tinkerpop.com">Blueprints</a>.</p>
 
 <ul>
-  <li>Support for various data source
+  <li>Support for various data sources/sinks
   <ul>
-    <li><a href="http://thinkaurelius.github.com/titan/">Titan</a> 0.1</li>
-    <li><a href="http://hadoop.apache.org/hdfs/">Hadoop File System</a> 1.0</li>
+    <li><a href="http://thinkaurelius.github.com/titan/">Titan</a> 0.1 distributed graph database</li>
+    <li><a href="http://rexster.tinkerpop.com">Rexster 2.x</a> fronted graph databases that support vertex iteration</li>
+    <li><a href="https://github.com/tinkerpop/blueprints/wiki/GraphSON-Reader-and-Writer-Library">GraphSON</a> text format stored in <a href="http://hadoop.apache.org/hdfs/">HDFS</a></li>
   </ul>
   </li>
+  <li>Support for various MapReduce-based graph algorithms
+  <ul>
+    <li>Numerous graph derivation/transformation steps</li>
+    <li>Numerous global graph statistics</li>
+  </ul>
   <li>Natively implements the <a href="http://blueprints.tinkerpop.com">Blueprints</a> graph API</li>
   <li>Open source with the liberal <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2</a> license</li>
 </ul>
