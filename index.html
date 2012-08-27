@@ -35,7 +35,7 @@
 	
 <!----->
 
-<p>Faunus is a framework for processing <a href="https://github.com/tinkerpop/blueprints/wiki/Property-Graph-Model">property graphs</a> using <a href="http://hadoop.apache.org/">Hadoop</a>. A <a href="http://en.wikipedia.org/wiki/Adjacency_list">vertex-centric</a> data structure is processed using MapReduce jobs that implement a <a href="http://arxiv.org/abs/0806.2274">property graph algebra</a> for yielding graph derivations and basic graph statistics. Faunus can be extended with new operations written using <a href="http://hadoop.apache.org/mapreduce/">MapReduce</a> and <a href="http://blueprints.tinkerpop.com">Blueprints</a>.</p>
+<p>Faunus is a <a href="http://hadoop.apache.org/">Hadoop</a>-based distributed computing framework for <a href="https://github.com/tinkerpop/blueprints/wiki/Property-Graph-Model">property graphs</a>. A <a href="http://en.wikipedia.org/wiki/Breadth-first_search">breadth-first</a> version of the graph traversal language <a href="http://gremlin.tinkerpop.com">Gremlin</a> operates on a <a href="http://en.wikipedia.org/wiki/Adjacency_list">vertex-centric</a> property graph data structure. Faunus can be extended with new operations written using <a href="http://hadoop.apache.org/mapreduce/">MapReduce</a> and <a href="http://blueprints.tinkerpop.com">Blueprints</a>.</p>
 
 <ul>
   <li>Support for various data sources/sinks
@@ -43,14 +43,13 @@
     <li><a href="http://thinkaurelius.github.com/titan/">Titan 0.1</a> distributed graph database</li>
     <li><a href="http://rexster.tinkerpop.com">Rexster 2.x</a> fronted graph databases that support vertex iteration</li>
     <li><a href="https://github.com/tinkerpop/blueprints/wiki/GraphSON-Reader-and-Writer-Library">GraphSON</a> text format stored in <a href="http://hadoop.apache.org/hdfs/">HDFS</a></li>
+    <li>EdgeList multi-relational text format stored in <a href="http://hadoop.apache.org/hdfs/">HDFS</a></li>
   </ul>
   </li>
-  <li>Support for various MapReduce-based graph algorithms
+  <li>Natively implements the <a href="http://blueprints.tinkerpop.com">Blueprints</a> graph API
   <ul>
-    <li>Numerous graph derivation/transformation steps</li>
-    <li>Numerous global graph statistics</li>
-  </ul>
-  <li>Natively implements the <a href="http://blueprints.tinkerpop.com">Blueprints</a> graph API</li>
+    <li><a href="http://gremlin.tinkerpop.com">Gremlin</a> graph traversal language (backed by MapReduce)</li>
+  </ul></li>
   <li>Open source with the liberal <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2</a> license</li>
 </ul>
 
@@ -60,8 +59,7 @@
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Faunus is maintained by <a href="http://thinkaurelius.com">Aurelius</a>
-</p>
+        <p class="copyright">Faunus is maintained by <a href="http://thinkaurelius.com">Aurelius</a></p>
       </footer>
     </div>
 
