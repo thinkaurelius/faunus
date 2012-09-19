@@ -18,48 +18,87 @@
         <header class="inner">
           <a id="forkme_banner" href="https://github.com/thinkaurelius/faunus/wiki">View Documentation</a>
 
-          <h1 id="project_title">Faunus</h1>
+          <h1 id="project_title">FAUNUS</h1>
           <h2 id="project_tagline">A Library of Hadoop-Based Graph Tools</h2>
-          <!--<section id="downloads">                                                                                                                  
+          <section id="downloads">                                                                                                                  
               <a class="zip_download_link" href="https://github.com/downloads/thinkaurelius/faunus/faunus-0.1-alpha.zip">Download this project as a .zip file</a>              
-          </section>-->
+          </section>
         </header>
     </div>
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-      <center>
-        <img src="images/faunus-logo.png" />
-      </center>
-	
-<!----->
 
-<p>Faunus is a <a href="http://hadoop.apache.org/">Hadoop</a>-based distributed computing framework for <a href="https://github.com/tinkerpop/blueprints/wiki/Property-Graph-Model">property graphs</a>. A <a href="http://en.wikipedia.org/wiki/Breadth-first_search">breadth-first</a> version of the graph traversal language <a href="http://gremlin.tinkerpop.com">Gremlin</a> operates on a <a href="http://en.wikipedia.org/wiki/Adjacency_list">vertex-centric</a> property graph data structure. Faunus can be extended with new operations written using <a href="http://hadoop.apache.org/mapreduce/">MapReduce</a> and <a href="http://blueprints.tinkerpop.com">Blueprints</a>.</p>
+
+      <img id="faunuslogo" src="images/faunus-logo2.png" />
+ 
+<p>Faunus is a <a href="http://hadoop.apache.org/">Hadoop</a>-based graph processing framework for analyzing massive-scale graphs. 
+A breadth-first version of the graph traversal language <a href="http://gremlin.tinkerpop.com">Gremlin</a> operates on graphs stored 
+in the distributed graph database <a href="http://thinkaurelius.github.com/titan/">Titan</a>, 
+in any <a href="http://rexster.tinkerpop.com">Rexster</a> fronted graph database, or in <a href="http://hadoop.apache.org/hdfs">HDFS</a> via various text and binary formats. 
+
+<p>In addition, Faunus provides the following features:</p>
 
 <ul>
-  <li>Support for various data sources/sinks
-  <ul>
-    <li><a href="http://thinkaurelius.github.com/titan/">Titan 0.1</a> distributed graph database</li>
-    <li><a href="http://rexster.tinkerpop.com">Rexster 2.x</a> fronted graph databases that support vertex iteration</li>
-    <li><a href="https://github.com/tinkerpop/blueprints/wiki/GraphSON-Reader-and-Writer-Library">GraphSON</a> text format stored in <a href="http://hadoop.apache.org/hdfs/">HDFS</a></li>
-    <li>EdgeList multi-relational text format stored in <a href="http://hadoop.apache.org/hdfs/">HDFS</a></li>
-  </ul>
-  </li>
-  <li>Natively implements the <a href="http://blueprints.tinkerpop.com">Blueprints</a> graph API
-  <ul>
-    <li><a href="http://gremlin.tinkerpop.com">Gremlin</a> graph traversal language (backed by MapReduce)</li>
-  </ul></li>
-  <li>Open source with the liberal <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2</a> license</li>
+<li>Scalable, distributed global graph processing.</li>
+
+<li>Support for various input and output formats:
+<ul>
+<li><a href="http://thinkaurelius.github.com/titan/">Aurelius Titan</a>
+<ul>
+<li><a href="http://cassandra.apache.org/">Apache Cassandra</a></li>
+<li><a href="http://cassandra.apache.org/">Apache HBase</a></li>
+</ul></li>
+<li><a href="http://rexster.tinkerpop.com/">TinkerPop Rexster</a></li>
+<li><a href="https://github.com/thinkaurelius/faunus/wiki/GraphSON-Format">GraphSON Text Files</a></li>
+<li><a href="http://wiki.apache.org/hadoop/SequenceFile">Hadoop Binary Files</a></li>
+</ul>
+</li>
+
+
+<li>Native integration with the <a href="http://www.tinkerpop.com">TinkerPop</a> graph stack:
+<ul>
+<li><a href="http://gremlin.tinkerpop.com">Gremlin</a> graph query language</li>
+<li><a href="http://blueprints.tinkerpop.com">Blueprints</a> standard graph API</li>
+</ul>
+</li>
+
+<li>Open source with the liberal <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2</a> license.</li>
 </ul>
 
-      </section>
+<p><a href="https://github.com/thinkaurelius/faunus/downloads">Download</a> Faunus or <a href="https://github.com/thinkaurelius/faunus">clone</a> from GitHub.
+Read the <a href="https://github.com/thinkaurelius/faunus/wiki">Faunus documentation</a> and join the <a href="https://groups.google.com/forum/#!forum/aureliusgraphs">mailing list</a>.<br />
+
+<p>For <a href="http://thinkaurelius.com/subscription/">commercial Faunus support</a>, please <a href="mailto:info@thinkaurelius.com">contact</a> the graph experts at <a href="http://thinkaurelius.com">Aurelius</a>.</p>
+
+
+<h2> Quick Start </h2>
+
+<div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>
+   <span class="nt">&lt;groupId&gt;</span>com.thinkaurelius.faunus<span class="nt">&lt;/groupId&gt;</span>
+   <span class="nt">&lt;artifactId&gt;</span>faunus<span class="nt">&lt;/artifactId&gt;</span>
+   <span class="nt">&lt;version&gt;</span>0.1-alpha<span class="nt">&lt;/version&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+
+<br>
+
+<div class="highlight"><pre><span class="c1">// which fathers have the most bellicose sons?</span>
+<span class="n">g</span><span class="o">.</span><span class="na">V</span><span class="o">.</span><span class="na">in</span><span class="o">(</span><span class="s1">'battled'</span><span class="o">).</span><span class="na">out</span><span class="o">(</span><span class="s1">'father'</span><span class="o">).</span><span class="na">groupCount</span>
+</pre></div>
+
+<p>Continue with the <a href="https://github.com/thinkaurelius/faunus/wiki/Getting-Started">Getting Started with Faunus</a> guide for a step-by-step introduction.</p>
+
+
+</section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        <p class="copyright">Faunus is maintained by <a href="http://thinkaurelius.com">Aurelius</a></p>
+        <p class="copyright">Titan is maintained by <a href="http://thinkaurelius.com">Aurelius</a>
+</p>
       </footer>
     </div>
 
