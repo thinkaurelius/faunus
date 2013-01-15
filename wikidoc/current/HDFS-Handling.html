@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+  <link rel="stylesheet" type="text/css" href="../public/css/gollum.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/editor.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/dialog.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/template.css" media="all">
+  
+  <!--[if IE 7]>
+  <link rel="stylesheet" type="text/css" href="../public/css/ie7.css" media="all">
+  <![endif]-->
+  
+  <script type="text/javascript" src="../public/css/jquery.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.dialog.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.placeholder.js"></script>
+  
+  <script type="text/javascript" 
+    src="../public/css/editor/gollum.editor.js"></script>
+  <title>HDFS Handling</title>
+</head>
+<body>
+
+<div id="wiki-wrapper" class="page">
+<div id="head"><h3><a href="Home.html">Aurelius Faunus 0.1.0</a></h3>
+  <h1>HDFS Handling</h1>
+  <ul class="actions">
+    <li class="minibutton"><a href="/pages"
+      class="action-all-pages">All Pages</a></li>
+    <li class="minibutton" class="jaws">
+      <a href="#" id="minibutton-new-page">New Page</a></li>
+    <li class="minibutton"><a href="/edit/HDFS-Handling"
+       class="action-edit-page">Edit Page</a></li>
+    <li class="minibutton"><a href="/history/HDFS-Handling"
+       class="action-page-history">Page History</a></li>
+  </ul>
+  <div id="searchbar">
+    <form action="/search" method="get" id="search-form">
+    <div id="searchbar-fauxtext">
+      <input type="text" name="q" id="search-query" value="Search&hellip;" autocomplete="off">
+      <a href="#" id="search-submit" title="Search this wiki">
+        <span>Search</span>
+      </a>
+    </div>
+    </form>
+  </div></div>
+<div id="wiki-content">
+  <div class="wrap">
+  <div id="wiki-body" class="gollum-textile-content">
+    <div id="template">
+      <p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/hdfs-logo.jpg" alt="" /></p>
+<p>The Hadoop Distributed File System (<span class="caps">HDFS</span>) is a filesystem that is supported by the nodes in the Hadoop compute cluster. <span class="caps">HDFS</span> has numerous similarities to typical filesystems such as those of the <a href="http://en.wikipedia.org/wiki/Linux">*nix</a> variety. The <code>hadoop</code> <span class="caps">CLI</span> utility provides a <a href="http://hadoop.apache.org/docs/r1.0.3/file_system_shell.html">collection of commands</a> that can be run from the local command line.</p>
+<p><span class="float-left"><span><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/gremlin-elephant.png" width="120px" /></span></span></p>
+<p>Gremlin provides methods to easily interact with both the local file system and <span class="caps">HDFS</span> from within the <span class="caps">REPL</span>. These methods are provided in the table below. Note that the global variables <code>local</code> and <code>hdfs</code> reference the local and <span class="caps">HDFS</span> file systems, respectively. Finally, <em>pattern</em> refers to a regular expression pattern and <em>path</em> refers to an explicit path to a file or directory.</p>
+<p><br /><br /></p>
+<table><tr><th>Method </th>
+		<th>Description </th>
+	</tr><tr><td> <code>ls()</code> </td>
+		<td> list all the contents in the home directory </td>
+	</tr><tr><td> <code>ls(pattern)</code> </td>
+		<td> list all the contents that match the pattern </td>
+	</tr><tr><td> <code>result(path)</code> </td>
+		<td> display the directory of the final result of a Faunus job </td>
+	</tr><tr><td> <code>exists(path)</code> </td>
+		<td> return true or false on whether path exists </td>
+	</tr><tr><td> <code>rm(pattern)</code> </td>
+		<td> remove all paths that match the pattern </td>
+	</tr><tr><td> <code>rmr(pattern)</code> </td>
+		<td> recursively remove all paths that match the pattern </td>
+	</tr><tr><td> <code>copyToLocal(from,to)</code> </td>
+		<td> copy the <span class="caps">HDFS</span> path to the local filesystem </td>
+	</tr><tr><td> <code>copyFromLocal(from,to)</code> </td>
+		<td> copy the local path to <span class="caps">HDFS</span> </td>
+	</tr><tr><td> <code>mergeToLocal(from,to)</code> </td>
+		<td> merge the files at hdfs path to a single file on the local filesystem </td>
+	</tr><tr><td> <code>head(pattern,lines?)</code> </td>
+		<td> look at the top <code>?lines</code> of the files that match pattern </td>
+	</tr><tr><td> <code>unzip(from,to,delete)</code> </td>
+		<td> <a href="http://en.wikipedia.org/wiki/Bzip2">BZ2</a> unzip the path to another path </td>
+	</tr></table>
+    </div>
+  </div>
+  </div>
+
+</div>
+<div id="footer">
+  <p id="last-edit">Last edited by <b>spmallette</b>, 2013-01-15 02:58:11</p>
+</div>
+</div>
+
+<script type="text/javascript" src="../public/css/MathJax/MathJax.js"></script>
+
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+  <link rel="stylesheet" type="text/css" href="../public/css/gollum.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/editor.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/dialog.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/template.css" media="all">
+  
+  <!--[if IE 7]>
+  <link rel="stylesheet" type="text/css" href="../public/css/ie7.css" media="all">
+  <![endif]-->
+  
+  <script type="text/javascript" src="../public/css/jquery.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.dialog.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.placeholder.js"></script>
+  
+  <script type="text/javascript" 
+    src="../public/css/editor/gollum.editor.js"></script>
+  <title>RDF Format</title>
+</head>
+<body>
+
+<div id="wiki-wrapper" class="page">
+<div id="head"><h3><a href="Home.html">Aurelius Faunus 0.1.0</a></h3>
+  <h1>RDF Format</h1>
+  <ul class="actions">
+    <li class="minibutton"><a href="/pages"
+      class="action-all-pages">All Pages</a></li>
+    <li class="minibutton" class="jaws">
+      <a href="#" id="minibutton-new-page">New Page</a></li>
+    <li class="minibutton"><a href="/edit/RDF-Format"
+       class="action-edit-page">Edit Page</a></li>
+    <li class="minibutton"><a href="/history/RDF-Format"
+       class="action-page-history">Page History</a></li>
+  </ul>
+  <div id="searchbar">
+    <form action="/search" method="get" id="search-form">
+    <div id="searchbar-fauxtext">
+      <input type="text" name="q" id="search-query" value="Search&hellip;" autocomplete="off">
+      <a href="#" id="search-submit" title="Search this wiki">
+        <span>Search</span>
+      </a>
+    </div>
+    </form>
+  </div></div>
+<div id="wiki-content">
+  <div class="wrap">
+  <div id="wiki-body" class="gollum-textile-content">
+    <div id="template">
+      <p><img src="http://www.w3.org/RDF/icons/rdf_w3c_icon.128" alt="" /></p>
+<ul><li><strong>InputFormat</strong>: <code>com.thinkaurelius.faunus.formats.edgelist.rdf.RDFInputFormat</code></li>
+</ul><p>The <a href="http://en.wikipedia.org/wiki/Semantic_Web">Semantic Web</a> community is one of the original promoters of the graph as an approach to data modeling. Their efforts have led to the development of the <a href="http://www.w3.org/RDF/"><span class="caps">RDF</span></a> format. While there are many <span class="caps">RDF</span> formats, an <span class="caps">RDF</span> file is (conceptually) composed of triples whereby a subject is connected to an object by a predicate. For instance:</p>
+<pre><code>&lt;http://thinkaurelius.com#hercules&gt; &lt;http://thinkaurelius.com#father&gt; &lt;http://thinkaurelius.com#jupiter&gt; .</code></pre>
+<p>In this way, <span class="caps">RDF</span> is an edge list format. Faunus, on the other hand, makes use of an <a href="http://en.wikipedia.org/wiki/Adjacency_list">adjacency list</a> in its representation. Therefore, for these two formats to interoperate, the <code>RDFInputFormat</code> provided by Faunus contains a MapReduce job that converts an edge list into a adjacency list.</p>
+<h2>Conversion Parameters</h2>
+<h3><span class="caps">RDF</span> Format</h3>
+<p><code>faunus.graph.input.rdf.format</code></p>
+<p>There are numerous <span class="caps">RDF</span> formats. Faunus currently supports the following formats.</p>
+<ul><li>rdf-xml</li>
+	<li>n-triples</li>
+	<li>turtle</li>
+	<li>n3</li>
+	<li>trix</li>
+	<li>trig</li>
+</ul><p><strong><span class="caps">NOTE</span></strong>: Faunus makes use of <code>LineRecordReader</code> to read statements from an <span class="caps">RDF</span> file. If a line (<code>\n</code>) does not contain a complete legal <span class="caps">RDF</span> fragment, then an exception is thrown by the <span class="caps">RDF</span> parser.</p>
+<h3>Literal as Property</h3>
+<p><code>faunus.graph.input.rdf.literal-as-property</code></p>
+<p>There are two types of triples to be aware of &#x2014; one that is a <span class="caps">URI</span> connecting to a <span class="caps">URI</span> and one that is a <span class="caps">URI</span> connecting to a literal. The two types of triples are exemplified below.</p>
+<pre><code>&lt;http://thinkaurelius.com#hercules&gt; &lt;http://thinkaurelius.com#father&gt; &lt;http://thinkaurelius.com#jupiter&gt; .
+&lt;http://thinkaurelius.com#hercules&gt; &lt;http://thinkaurelius.com#age&gt; "32"^^&lt;http://www.w3.org/2001/XMLSchema#int&gt; .</code></pre>
+<p>If the above Faunus property is set to <code>true</code>, then the Hercules vertex has an age property with an integer values of 32.</p>
+<h3>Use Local Name</h3>
+<p><code>faunus.graph.input.rdf.use-localname</code></p>
+<p>The theoretically infinite <span class="caps">RDF</span> graph is embedded with the infinite address space of URIs. In many situations, the full <span class="caps">URI</span> is not desired and as such, if the above property is set to <code>true</code>, then</p>
+<pre><code>&lt;http://thinkaurelius.com#hercules&gt; &lt;http://thinkaurelius.com#father&gt; &lt;http://thinkaurelius.com#jupiter&gt; .</code></pre>
+<p>Generates vertices with name <code>hercules</code> and <code>jupiter</code> connected by a <code>father</code> edge.</p>
+<h3>As Properties</h3>
+<p><code>faunus.graph.input.rdf.as-properties</code></p>
+<p><span class="caps">RDF</span> is a triple format &#x2014; there are no properties, only vertices and edges. In some situations, an object <span class="caps">URI</span> should be treated as a property of the vertex. For instance, when <code>http://www.w3.org/1999/02/22-rdf-syntax-ns#type</code> is specified in the <code>String</code> list of the property above, then the triple</p>
+<pre><code>&lt;http://thinkaurelius.com#hercules&gt; &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#type&gt; &lt;http://thinkaurelius.com#demigod&gt;</code></pre>
+<p>yields a Hercules vertex with type-property demigod. A typical setting for this property is below.</p>
+<pre><code>faunus.input.format.rdf.as-properties=http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://www.w3.org/2000/01/rdf-schema#label</code></pre>
+    </div>
+  </div>
+  </div>
+
+</div>
+<div id="footer">
+  <p id="last-edit">Last edited by <b>spmallette</b>, 2013-01-15 02:58:11</p>
+</div>
+</div>
+
+<script type="text/javascript" src="../public/css/MathJax/MathJax.js"></script>
+
+
+</body>
+</html>

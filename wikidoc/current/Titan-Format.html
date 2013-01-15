@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html;charset=utf-8">
+  <link rel="stylesheet" type="text/css" href="../public/css/gollum.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/editor.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/dialog.css" media="all">
+  <link rel="stylesheet" type="text/css" href="../public/css/template.css" media="all">
+  
+  <!--[if IE 7]>
+  <link rel="stylesheet" type="text/css" href="../public/css/ie7.css" media="all">
+  <![endif]-->
+  
+  <script type="text/javascript" src="../public/css/jquery.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.dialog.js"></script>
+  <script type="text/javascript" src="../public/css/gollum.placeholder.js"></script>
+  
+  <script type="text/javascript" 
+    src="../public/css/editor/gollum.editor.js"></script>
+  <title>Titan Format</title>
+</head>
+<body>
+
+<div id="wiki-wrapper" class="page">
+<div id="head"><h3><a href="Home.html">Aurelius Faunus 0.1.0</a></h3>
+  <h1>Titan Format</h1>
+  <ul class="actions">
+    <li class="minibutton"><a href="/pages"
+      class="action-all-pages">All Pages</a></li>
+    <li class="minibutton" class="jaws">
+      <a href="#" id="minibutton-new-page">New Page</a></li>
+    <li class="minibutton"><a href="/edit/Titan-Format"
+       class="action-edit-page">Edit Page</a></li>
+    <li class="minibutton"><a href="/history/Titan-Format"
+       class="action-page-history">Page History</a></li>
+  </ul>
+  <div id="searchbar">
+    <form action="/search" method="get" id="search-form">
+    <div id="searchbar-fauxtext">
+      <input type="text" name="q" id="search-query" value="Search&hellip;" autocomplete="off">
+      <a href="#" id="search-submit" title="Search this wiki">
+        <span>Search</span>
+      </a>
+    </div>
+    </form>
+  </div></div>
+<div id="wiki-content">
+  <div class="wrap">
+  <div id="wiki-body" class="gollum-textile-content">
+    <div id="template">
+      <p><img src="http://thinkaurelius.github.com/titan/images/titan-logo.png" width="400px" /></p>
+<ul><li><strong>InputFormat</strong>: <code>com.thinkaurelius.faunus.formats.titan.cassandra.TitanCassandraInputFormat</code></li>
+	<li><strong>InputFormat</strong>: <code>com.thinkaurelius.faunus.formats.titan.hbase.TitanHBaseInputFormat</code></li>
+</ul><ul><li><strong>OutputFormat</strong>: <code>com.thinkaurelius.faunus.formats.titan.cassandra.TitanCassandraOutputFormat</code></li>
+	<li><strong>OutputFormat</strong>: <code>com.thinkaurelius.faunus.formats.titan.hbase.TitanHBaseOutputFormat</code></li>
+</ul><p><a href="http://thinkaurelius.github.com/titan/">Titan</a> is a distributed graph database developed by <a href="http://thinkaurelius.com/">Aurelius</a> and provided under the liberal <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2</a> license. Titan is backend agnostic and is currently deployed with support for Apache <a href="http://cassandra.apache.org/">Cassandra</a> and Apache <a href="http://hbase.apache.org/">HBase</a> (see <a href="https://github.com/thinkaurelius/titan/wiki/The-Benefits-of-Titan">The Benefits of Titan</a> and <a href="https://github.com/thinkaurelius/titan/wiki/Storage-Backend-Overview">Storage Backend Overview</a>).</p>
+<h2>Titan InputFormat Support</h2>
+<p>An <code>InputFormat</code> specifies how to turn a data source into a stream of Hadoop <code>&lt;KEY,VALUE&gt;</code> pairs (see <a href="http://www.infoq.com/articles/HadoopInputFormat">blog post</a>). For Faunus, this means turning the source data into a stream of <code>&lt;NullWritable, FaunusVertex&gt;</code> pairs. The following <code>TitanXXXInputFormat</code> classes stream Titan encoded data contained within <a href="http://cassandra.apache.org/">Cassandra</a> and <a href="http://hbase.apache.org/">HBase</a> into Faunus/Hadoop.</p>
+<h3>TitanCassandraInputFormat</h3>
+<p><img src="http://cassandra.apache.org/media/img/cassandra_logo.png" width="250px" /></p>
+<p>In order to read graph data from Titan/Cassandra, a graph needs to exist. For the sake of an example, <em>The Graph of the Gods</em> dataset deployed with Titan can be loaded using <a href="http://gremlin.tinkerpop.com">Gremlin</a> (see diagram at <a class="internal present" href="Getting-Started.html">Getting Started</a>).</p>
+<pre><code>gremlin&gt; g = TitanFactory.open('bin/cassandra.local')
+==&gt;titangraph[cassandra:127.0.0.1]
+gremlin&gt; g.loadGraphML('data/graph-of-the-gods.xml')
+==&gt;null
+gremlin&gt; g.stopTransaction(SUCCESS)</code></pre>
+<p>In Faunus, a <code>bin/titan-cassandra-input.properties</code> file is provided with the following properties which tell Faunus the location and features of the Titan/Cassandra cluster.</p>
+<pre><code>faunus.graph.input.format=com.thinkaurelius.faunus.formats.titan.cassandra.TitanCassandraInputFormat
+faunus.graph.input.titan.storage.backend=cassandra
+faunus.graph.input.titan.storage.hostname=localhost
+faunus.graph.input.titan.storage.port=9160
+faunus.graph.input.titan.storage.keyspace=titan
+cassandra.input.partitioner.class=org.apache.cassandra.dht.RandomPartitioner
+# cassandra.input.split.size=512</code></pre>
+<pre><code>gremlin&gt; g = FaunusFactory.open('bin/titan-cassandra-input.properties')      
+==&gt;faunusgraph[titancassandrainputformat]
+gremlin&gt; g.V.count()
+13/01/04 12:53:24 INFO mapreduce.FaunusCompiler: Compiled to 1 MapReduce job(s)
+13/01/04 12:53:24 INFO mapreduce.FaunusCompiler: Executing job 1 out of 1: MapSequence[com.thinkaurelius.faunus.mapreduce.transform.VerticesMap.Map, com.thinkaurelius.faunus.mapreduce.util.CountMapReduce.Map, com.thinkaurelius.faunus.mapreduce.util.CountMapReduce.Reduce]
+...
+==&gt;12</code></pre>
+<p><strong><span class="caps">NOTE</span></strong>: When using Titan/Cassandra as a data source, and if there are vertices with a large number of edges (i.e. a very wide row in Cassandra), an inoculous exception may occur warning that the thrift frame size has been exceeded. While the <code>cassandra.yaml</code> can be updated, typically, the easiest way to solve this is to add the following property to the <code>FaunusGraph</code> being worked with: <code>cassandra.input.split.size=512</code> (see <code>bin/titan-cassandra-input.properties</code>). The value <code>512</code> is how many kilobytes to make the input split size and this value can be adjusted higher or lower to ensure performant, non-excepting behavior.</p>
+<h3>TitanHBaseInputFormat</h3>
+<p><img src="http://hbase.apache.org/images/hbase_logo.png" width="200px" /></p>
+<p><em>The Graph of the Gods</em> dataset deployed with Titan can be loaded into Titan/HBase using <a href="http://gremlin.tinkerpop.com">Gremlin</a> (see diagram at <a class="internal present" href="Getting-Started.html">Getting Started</a>).</p>
+<pre><code>gremlin&gt; g = TitanFactory.open('bin/hbase.local')
+==&gt;titangraph[hbase:127.0.0.1]
+gremlin&gt; g.loadGraphML('data/graph-of-the-gods.xml')
+==&gt;null
+gremlin&gt; g.stopTransaction(SUCCESS)</code></pre>
+<p>In Faunus, a <code>bin/titan-hbase-input.properties</code> file is provided with the following properties. This creates a <code>FaunusGraph</code> that is fed from Titan/HBase. Note, for multi-machines environments, the <code>titan.graph.input.storage.hostname</code> should use the cluster-internal IP address of the machine with <a href="http://zookeeper.apache.org/">Zookeeper</a> even if that machine is in fact <code>localhost</code>.</p>
+<pre><code>faunus.graph.input.format=com.thinkaurelius.faunus.formats.titan.hbase.TitanHBaseInputFormat
+faunus.graph.input.titan.storage.backend=hbase
+faunus.graph.input.titan.storage.hostname=localhost
+faunus.graph.input.titan.storage.port=2181
+faunus.graph.input.titan.storage.tablename=titan
+# hbase.mapreduce.scan.cachedrows=1000</code></pre>
+<pre><code>gremlin&gt; g = FaunusFactory.open('bin/titan-hbase-input.properties') 
+==&gt;faunusgraph[titanhbaseinputformat]
+gremlin&gt; g.V.count()
+13/01/04 15:40:56 INFO mapreduce.FaunusCompiler: Compiled to 1 MapReduce job(s)
+13/01/04 15:40:56 INFO mapreduce.FaunusCompiler: Executing job 1 out of 1: MapSequence[com.thinkaurelius.faunus.mapreduce.transform.VerticesMap.Map, com.thinkaurelius.faunus.mapreduce.util.CountMapReduce.Map, com.thinkaurelius.faunus.mapreduce.util.CountMapReduce.Reduce]
+...
+==&gt;12</code></pre>
+<p>Please follow the links below for more information on streaming data out of HBase.</p>
+<ul><li><a href="http://gbif.blogspot.com/2012/02/performance-evaluation-of-hbase.html">http://gbif.blogspot.com/2012/02/performance-evaluation-of-hbase.html</a></li>
+</ul><h2>Titan OutputFormat Support</h2>
+<p>Faunus can be used to bulk load data into Titan. Thus, given a stream of <code>&lt;NullWritable, FaunusVertex&gt;</code> pairs, with a <code>TitanXXXOutputFormat</code> the stream is faithfully written to Titan. For all the examples to follow, it is assumed that <code>data/graph-of-the-gods.json</code> is in <span class="caps">HDFS</span>. Finally, note that is is typically a good idea to have the graph (keyspace/table) already initialized (e.g. <code>g = TitanFactory.open(...)</code>) before doing bulk writing as the creation process takes time and a heavy write load during the graph creation process can yield exceptions.</p>
+<p><strong><span class="caps">WARNING</span></strong>: During a map or reduce task, numerous transactions are being committed. If a task fails, then Hadoop will restart that task at the beginning of its split. Given that transactions have already been committed for that data prior to the failure, inserting repeated data is likely. Until a successful task split-to-transaction is developed, any failed task during data ingestion into Titan can not be trusted to be consistent.</p>
+<h3>TitanCassandraOutputFormat</h3>
+<p><img src="http://cassandra.apache.org/media/img/cassandra_logo.png" width="250px" /></p>
+<pre><code>faunus.graph.output.format=com.thinkaurelius.faunus.formats.titan.cassandra.TitanCassandraOutputFormat
+faunus.graph.output.titan.storage.backend=cassandra
+faunus.graph.output.titan.storage.hostname=localhost
+faunus.graph.output.titan.storage.port=9160
+faunus.graph.output.titan.storage.keyspace=titan
+faunus.graph.output.titan.storage.batch-loading=true
+# faunus.graph.output.titan.ids.block-size=100000
+faunus.graph.output.titan.infer-schema=true
+faunus.graph.output.blueprints.tx-commit=5000</code></pre>
+<p>Here are some notes for the above properties.</p>
+<ul><li><code>storage.batch-loading</code>: By setting this to true, certain checks in Titan are circumvented which speeds up the writing process.</li>
+	<li><code>ids.block-size</code>: When this value is small and the clients are writing lots of data, the clients communicates with Titan repeatedly to get new ids and this can cause exceptions to happen as the id system stalls trying to serve all the clients.</li>
+	<li><code>infer-schema</code>: When a new edge label or property key is provided to Titan, Titan updates its schema metadata. By inferring the schema prior to writing, exceptions can be circumvented.</li>
+	<li><code>tx-commit</code>: It is possible to determine how many vertices/edges should be written before committing a transaction. It is important to batch so that every write it not a commit.</li>
+</ul><pre><code>gremlin&gt; g = FaunusFactory.open('bin/titan-cassandra-output.properties') 
+==&gt;faunusgraph[graphsoninputformat]
+gremlin&gt; g.V.sideEffect('{it.roman = true}') 
+13/01/04 15:44:42 INFO mapreduce.FaunusCompiler: Compiled to 1 MapReduce job(s)
+13/01/04 15:44:42 INFO mapreduce.FaunusCompiler: Executing job 1 out of 1: MapSequence[com.thinkaurelius.faunus.mapreduce.transform.VerticesMap.Map, com.thinkaurelius.faunus.mapreduce.sideeffect.SideEffectMap.Map, com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.Map, com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.Reduce]
+...</code></pre>
+<p>In the above job, the <em>Graph of the Gods</em> GraphSON file is streamed from <span class="caps">HDFS</span> and each vertex has a new property added (<code>roman=true</code>). The output graph is pushed into Titan/Cassandra. Via the Titan/Gremlin console, the graph is viewable.</p>
+<pre><code>titan$ bin/gremlin.sh 
+
+         \,,,/
+         (o o)
+-----oOOo-(_)-oOOo-----
+gremlin&gt; g = TitanFactory.open('bin/cassandra.local')
+==&gt;titangraph[cassandrathrift:127.0.0.1]
+gremlin&gt; g.v(4).map
+==&gt;{name=saturn, type=titan, roman=true}
+gremlin&gt;</code></pre>
+<h3>TitanHBaseOutputFormat</h3>
+<p><img src="http://hbase.apache.org/images/hbase_logo.png" width="200px" /></p>
+<pre><code>faunus.graph.output.format=com.thinkaurelius.faunus.formats.titan.hbase.TitanHBaseOutputFormat
+faunus.graph.output.titan.storage.backend=hbase
+faunus.graph.output.titan.storage.hostname=localhost
+faunus.graph.output.titan.storage.port=2181
+faunus.graph.output.titan.storage.tablename=titan
+faunus.graph.output.titan.storage.batch-loading=true
+# titan.graph.output.ids.block-size=100000
+faunus.graph.output.titan.infer-schema=true
+faunus.graph.output.blueprints.tx-commit=5000</code></pre>
+<p><strong><span class="caps">NOTE</span>:</strong> Please see the <code>TitanCassandraOutputFormat</code> section for information the meaning of these properties.</p>
+<p>The properties above are used to construct a <code>FaunusGraph</code>. The Gremlin traversal&#x2019;s resultant graph is then written to Titan/HBase and the output process is complete.</p>
+<pre><code>gremlin&gt; g = FaunusFactory.open('bin/titan-hbase-output.properties')    
+==&gt;faunusgraph[graphsoninputformat]
+gremlin&gt; g.V.sideEffect('{it.roman = true}')                           
+13/01/04 15:48:32 INFO mapreduce.FaunusCompiler: Compiled to 1 MapReduce job(s)
+13/01/04 15:48:32 INFO mapreduce.FaunusCompiler: Executing job 1 out of 1: MapSequence[com.thinkaurelius.faunus.mapreduce.transform.VerticesMap.Map, com.thinkaurelius.faunus.mapreduce.sideeffect.SideEffectMap.Map, com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.Map, com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.Reduce]
+...</code></pre>
+    </div>
+  </div>
+  </div>
+
+</div>
+<div id="footer">
+  <p id="last-edit">Last edited by <b>spmallette</b>, 2013-01-15 02:58:11</p>
+</div>
+</div>
+
+<script type="text/javascript" src="../public/css/MathJax/MathJax.js"></script>
+
+
+</body>
+</html>
