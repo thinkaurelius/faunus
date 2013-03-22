@@ -21,7 +21,7 @@
   <script type="text/javascript" src="../public/css/editor/gollum.editor.js"></script>
 
 
-  <title>Acknowledgements</title>
+  <title>Version Compatibilities</title>
 </head>
 <body>
 
@@ -34,7 +34,7 @@ Mousetrap.bind(['e'], function( e ) {
 </script>
 <div id="wiki-wrapper" class="page">
 <div id="head"><h3><a href="Home.html">Aurelius Faunus 0.1.1</a></h3>
-  <h1>Acknowledgements</h1>
+  <h1>Version Compatibilities</h1>
   <ul class="actions">
     <li class="minibutton">
       <div id="searchbar">
@@ -57,9 +57,9 @@ Mousetrap.bind(['e'], function( e ) {
       <a href="#" id="minibutton-new-page">New</a></li>
     <li class="minibutton" class="jaws">
       <a href="#" id="minibutton-rename-page">Rename</a></li>
-    <li class="minibutton"><a href="/edit/Acknowledgements"
+    <li class="minibutton"><a href="/edit/Version-Compatibilities"
        class="action-edit-page">Edit</a></li>
-    <li class="minibutton"><a href="/history/Acknowledgements"
+    <li class="minibutton"><a href="/history/Version-Compatibilities"
        class="action-page-history">History</a></li>
   </ul>
 </div>
@@ -67,23 +67,29 @@ Mousetrap.bind(['e'], function( e ) {
 <div class="wrap">
   <div id="wiki-body" class="gollum-textile-content">
     <div id="template">
-      <p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/faunus-logo.png" width="400px" /></p>
-<p>Faunus is an ongoing effort by various developers, contributors, and organizations. Along with this explicit list of contributors, Faunus is also possible because of the excellent open source products that compose Faunus. Please see a list of these projects in the Faunus <a href="https://github.com/thinkaurelius/faunus/blob/master/pom.xml">pom.xml</a>.</p>
-<h2>People<a class="anchor" id="People" href="#People"></a></h2>
-<ol><li><a href="http://markorodriguez.com">Marko A. Rodriguez</a>: Creator and primary developer for Faunus.</li>
-	<li><a href="http://stephen.genoprime.com/">Stephen Mallette</a>: Provided support for <a href="https://github.com/tinkerpop/blueprints/wiki/GraphSON-Reader-and-Writer-Library">GraphSON</a> and <a href="http://rexster.tinkerpop.com">Rexster</a> connectivity.</li>
-	<li><a href="http://matthiasb.com/">Matthias Broecheler</a>: Provided support for <a href="http://thinkaurelius.github.com/titan/">Titan</a> connectivity.</li>
-	<li><a href="http://www.ketrinayim.com/">Ketrina Yim</a>: Created the Faunus logo.</li>
-</ol><h2>Organizations<a class="anchor" id="Organizations" href="#Organizations"></a></h2>
-<ol><li><a href="http://thinkaurelius.com">Aurelius</a>: Provided the development team and maintains the Faunus codebase.</li>
-</ol>
+      <p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/faunus-logo.png" width="300px" /></p>
+<p>The Faunus project is growing along with the rest of the Aurelius Graph Cluster technology. Below are version compatibilities between the various versions of Faunus and Titan. Note that Faunus and Titan are not on the same version numbers and will be sync’d come a 1.0 release.</p>
+<table><tr><td> <strong>Faunus</strong> </td>
+		<td> <strong>Titan</strong> </td>
+		<td> <strong>Hadoop</strong> </td>
+	</tr><tr><td> 0.1-alpha </td>
+		<td> 0.1.0 </td>
+		<td> 1.0.y </td>
+	</tr><tr><td> 0.1.0 </td>
+		<td> 0.2.0 </td>
+		<td> 1.0/1.y </td>
+	</tr><tr><td> 0.1.1 </td>
+		<td> 0.2.1 </td>
+		<td> 1.0/1.y </td>
+	</tr></table><ul><li>Faunus 0.1-alpha’s <code>SequenceFile</code> format is different than Faunus 0.1.0’s <code>SequenceFile</code> format due to the introduction of a variable-width encoding optimization.</li>
+</ul>
     </div>
   </div>
   </div>
 
 </div>
 <div id="footer">
-  <p id="last-edit">Last edited by <b>okram</b>, 2012-08-31 13:46:48</p>
+  <p id="last-edit">Last edited by <b>okram</b>, 2013-03-18 18:21:23</p>
   <p>
     
   </p>
