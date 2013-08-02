@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>Using Amazon S3 for Storage</title>
+    <link rel="stylesheet" href="./css/screen.css" type="text/css" charset="utf-8" />
+    <link rel="stylesheet" href="./css/gollum.css" type="text/css" charset="utf-8" />
+    <link rel="stylesheet" href="./css/syntax.css" type="text/css" charset="utf-8" />
+    <script src="./javascript/jquery-1.4.2.min.js" type="text/javascript"></script>
+    <script src="./javascript/jquery.text_selection-1.0.0.min.js" type="text/javascript"></script>
+    <script src="./javascript/jquery.previewable_comment_form.js" type="text/javascript"></script>
+    <script src="./javascript/jquery.tabs.js" type="text/javascript"></script>
+    <script src="./javascript/gollum.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <div id="main">
+      <div class="site">
+        <div id="guides">
+          <div class="guide">
+            <div class="main">
+              <div class="actions">
+                <div>
+                  <a href="./Home.html">Aurelius Faunus 0.3.2</a>
+                </div>
+              </div>
+              <h1>Using Amazon S3 for Storage</h1>
+              <div class="content wikistyle gollum textile">
+                <p><img src="http://www.ftp2cloud.com/wrdp/wp-content/themes/ftp2cloud/custom/images/logos/amazon_aws-s3.png" width="250px"></p>
+<blockquote>
+<p>Amazon S3 is storage for the Internet. It is designed to make web-scale computing easier for developers. Amazon S3 provides a simple web services interface that can be used to store and retrieve any amount of data, at any time, from anywhere on the web. It gives any developer access to the same highly scalable, reliable, secure, fast, inexpensive infrastructure that Amazon uses to run its own global network of web sites. The service aims to maximize benefits of scale and to pass those benefits on to developers. — <a href="http://aws.amazon.com/s3/">Amazon S3 webpage</a></p>
+</blockquote>
+<p><span class="caps">HDFS</span> implements the <code>FileSystem</code> <span class="caps">API</span>. There are other <code>FileSystem</code> implementations such as <code>LocalFileSystem</code>, <code>S3FileSystem</code> and <code>NativeS3FileSystem</code>. Faunus is able to leverage these file systems like another other file system in Hadoop.</p>
+<h2>Interacting with S3 via the Gremlin <span class="caps">REPL</span>
+</h2>
+<div class="highlight">
+<pre>gremlin&gt; import org.apache.hadoop.fs.s3native.*
+...
+gremlin&gt; id = // AWS_ACCESS_KEY_ID as a String
+==&gt;*******
+gremlin&gt; key = // AWS_SECRET_ACCESS_KEY as a String
+==&gt;*******
+gremlin&gt; s3fs = new NativeS3FileSystem()
+==&gt;org.apache.hadoop.fs.s3native.NativeS3FileSystem@7433c78b
+gremlin&gt; s3fs.initialize(new URI("s3n://${id}:${key}@aurelius-data"), new Configuration())
+==&gt;null
+gremlin&gt; s3fs.ls('/friendster')
+==&gt;rwxrwxrwx   0 _SUCCESS
+==&gt;rwxrwxrwx   0 (D) _logs
+==&gt;rwxrwxrwx   71400361 part-m-00000
+==&gt;rwxrwxrwx   70471619 part-m-00001
+==&gt;rwxrwxrwx   69870835 part-m-00002
+==&gt;rwxrwxrwx   69452656 part-m-00003
+...
+gremlin&gt; s3fs.ls('/friendster')._().count()
+==&gt;962
+</pre>
+</div>
+<br>
+At this point, <code>s3fs</code> is like any other file system and can be used to store and retrive data. In fact, it is possible to set up S3 as the source and sink of Faunus jobs (see <a href="http://wiki.apache.org/hadoop/AmazonS3">documentation</a> for more information). Given that <a href="http://gremlin.tinkerpop.com">Gremlin</a> provides full access to the Java/Groovy <span class="caps">API</span>, connecting to arbitrary <code>FileSystem</code> implementations is relatively simple.
+<h2>Parallel Uploading and Downloading of Data</h2>
+<p>The parallel copy tool <code>DistCp</code> can be used from the command line to execute a parallel copy from any source filesystem to any destination filesystem. An example is provided below.</p>
+<div class="highlight">
+<pre>$ hadoop distcp s3n://$AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY@aurelius-data/friendster hdfs://ec2-204-236-188-243.us-west-1.compute.amazonaws.com:8020/user/ubuntu/
+13/04/25 14:32:38 INFO tools.DistCp: srcPaths=[s3n://*****:*****@aurelius-data/friendster]
+13/04/25 14:32:38 INFO tools.DistCp: destPath=hdfs://ec2-204-236-188-243.us-west-1.compute.amazonaws.com:8020/user/ubuntu
+13/04/25 14:32:45 INFO tools.DistCp: sourcePathsCount=966
+13/04/25 14:32:45 INFO tools.DistCp: filesToCopyCount=963
+13/04/25 14:32:45 INFO tools.DistCp: bytesToCopyCount=60.0g
+13/04/25 14:32:46 INFO mapred.JobClient: Running job: job_201304251356_0003
+13/04/25 14:32:47 INFO mapred.JobClient:  map 0% reduce 0%
+13/04/25 14:33:28 INFO mapred.JobClient:  map 1% reduce 0%
+...
+</pre>
+</div>
+
+              </div>
+            </div>
+          </div>
+          <div class="admin">
+            <div style="float: left;">
+              <small>Last edited by <b>Dan LaRocque</b>, 2013-08-01 20:03:55</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
