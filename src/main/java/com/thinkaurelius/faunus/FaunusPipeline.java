@@ -36,6 +36,7 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.pipes.transform.TransformPipe;
 import com.tinkerpop.pipes.util.structures.Pair;
+import groovy.lang.Closure;
 import org.apache.hadoop.io.BooleanWritable;
 import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.FloatWritable;
@@ -604,14 +605,14 @@ public class FaunusPipeline {
      * @param closure return true to emit and false to remove.
      * @return the extended FaunusPipeline
      */
-    public FaunusPipeline filter(final String closure) {
+    public FaunusPipeline filter(final Closure closure) {
         this.state.assertNotLocked();
         this.state.assertNoProperty();
 
         this.compiler.addMap(FilterMap.Map.class,
                 NullWritable.class,
                 FaunusVertex.class,
-                FilterMap.createConfiguration(this.state.getElementType(), this.validateClosure(closure)));
+                FilterMap.createConfiguration(this.state.getElementType(), closure));
         makeMapReduceString(FilterMap.class);
         return this;
     }
