@@ -25,7 +25,9 @@ public class FilterMapTest extends BaseTest {
     }
 
     public void testVerticesOnName() throws Exception {
-        Configuration config = FilterMap.createConfiguration(Vertex.class, { it -> it.name.startsWith('v') });
+        //GremlinGroovyScriptEngine engine = new GremlinGroovyScriptEngine();
+        //Configuration config = FilterMap.createConfiguration(Vertex.class, (Closure)engine.eval("{ it -> it.name.startsWith('v') }"));
+        Configuration config = FilterMap.createConfiguration(Vertex.class, { it -> it.getProperty("name").startsWith('v') });
         mapReduceDriver.withConfiguration(config);
 
         Map<Long, FaunusVertex> graph = runWithGraph(startPath(generateGraph(BaseTest.ExampleGraph.TINKERGRAPH, config), Vertex.class), mapReduceDriver);
@@ -45,7 +47,7 @@ public class FilterMapTest extends BaseTest {
     }
 
     public void testEdgesOnWeight() throws Exception {
-        Configuration config = FilterMap.createConfiguration(Edge.class, { it -> it.weight > 0.19 && it.weight < 0.21 });
+        Configuration config = FilterMap.createConfiguration(Edge.class, { it -> it.getProperty("weight") > 0.19 && it.getProperty("weight") < 0.21 });
         mapReduceDriver.withConfiguration(config);
 
         Map<Long, FaunusVertex> results = runWithGraph(startPath(generateGraph(BaseTest.ExampleGraph.TINKERGRAPH, config), Edge.class), mapReduceDriver);
