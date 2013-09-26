@@ -10,8 +10,10 @@ class ClosureHolderTest extends TestCase {
 
     public void testSerialization() {
         ClosureHolder c1 = new ClosureHolder({ it.getProperty("name").equals("marko") });
-        String bytes = c1.serialize();
-        ClosureHolder c2 = ClosureHolder.deserialize(bytes);
+        ClosureHolder c2 = ClosureHolder.deserialize(c1.serialize());
+
+        println c1.getClosure().getClass();
+        println c2.getClosure().getClass();
 
         def g = new TinkerGraph()
         def v = g.addVertex(null);

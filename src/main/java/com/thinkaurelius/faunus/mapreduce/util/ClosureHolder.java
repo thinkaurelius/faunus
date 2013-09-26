@@ -39,20 +39,22 @@ public class ClosureHolder<T> implements Serializable {
         try {
             final ByteArrayOutputStream stream = new ByteArrayOutputStream();
             ObjectOutputStream outputStream = new ObjectOutputStream(stream);
-            outputStream.writeObject(this);
+            this.writeObject(outputStream);
+            outputStream.flush();
             return new BASE64Encoder().encode(stream.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new RuntimeException(e.getMessage(),e);
         }
     }
 
     public static <T> ClosureHolder<T> deserialize(final String bytes) throws IOException, InterruptedException {
-        ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(bytes)));
+        ObjectInputStream inputStream = new ObjectInputStream(new ByteArrayInputStream(new BASE64Decoder().decodeBuffer(bytes)));
         try {
-            return (ClosureHolder) ois.readObject();
+            ClosureHolder<T> holder = new ClosureHolder<T>(null);
+            holder.readObject(inputStream);
+            return holder;
         } catch (ClassNotFoundException e) {
             throw new InterruptedException(e.getMessage());
         }
     }
-
 }
