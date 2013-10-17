@@ -75,7 +75,7 @@ Configuring template
 Starting 3 node(s) with roles [hadoop-datanode, hadoop-tasktracker]
 Starting 1 node(s) with roles [hadoop-namenode, hadoop-jobtracker]
 ...</code></pre>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/ec2-screenshot.png" alt="" /></p>
+<p><img src="images/ec2-screenshot.png" alt="" /></p>
 <p>When logging into the <a href="http://console.aws.amazon.com/ec2/">Amazon EC2 Console</a>, the cluster machines are visible. After running the Hadoop proxy shell script (in another window), the Hadoop cluster is ready for job submissions.</p>
 <pre><code>faunus$. ~/.whirr/faunuscluster/hadoop-proxy.sh
 Running proxy to Hadoop cluster at ec2-23-20-32-211.compute-1.amazonaws.com. Use Ctrl-c to quit. </code></pre>
@@ -87,7 +87,7 @@ drwxr-xr-x   - hadoop supergroup          0 2012-07-20 19:13 /hadoop
 drwxrwxrwx   - hadoop supergroup          0 2012-07-20 19:13 /tmp
 drwxrwxrwx   - hadoop supergroup          0 2012-07-20 19:13 /user</code></pre>
 <h2>Running a Faunus Script</h2>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/faunus-elephants.png" alt="" /></p>
+<p><img src="images/faunus-elephants.png" alt="" /></p>
 <p>Faunus can deploy jobs to the Amazon EC2 cluster. The first thing to do is to put a graph on <span class="caps">HDFS</span>. For this example, use the toy <code>data/graph-of-the-gods.json</code> file. Once the file is in <span class="caps">HDFS</span>, a <code>faunus.sh</code> derivation can be executed.</p>
 <pre><code>faunus$ bin/gremlin.sh
 
@@ -126,7 +126,7 @@ gremlin&gt; hdfs.ls('output/*')
 ==&gt;rwxr-xr-x ubuntu supergroup 0 (D) _logs
 ==&gt;rw-r--r-- ubuntu supergroup 435 graph-m-00000.bz2
 ==&gt;rw-r--r-- ubuntu supergroup 75 sideeffect-m-00000.bz2</code></pre>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/dead-elephants.png" alt="" /></p>
+<p><img src="images/dead-elephants.png" alt="" /></p>
 <p>When the cluster is no longer needed, Whirr can be used to shutdown the cluster.</p>
 <pre><code>faunus$ whirr destroy-cluster --config bin/whirr.properties 
 Starting to run scripts on cluster for phase destroyinstances: us-east-1/i-16376a6e, us-east-1/i-0c376a74, us-east-1/i-0a376a72

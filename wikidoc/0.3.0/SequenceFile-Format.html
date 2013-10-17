@@ -67,7 +67,7 @@ Mousetrap.bind(['e'], function( e ) {
 <div class="wrap">
   <div id="wiki-body" class="gollum-textile-content">
     <div id="template">
-      <p><img src="https://raw.github.com/thinkaurelius/faunus/master/doc/images/hadoop-logo.jpg" alt="" /></p>
+      <p><img src="images/hadoop-logo.jpg" alt="" /></p>
 <ul><li><strong>InputFormat</strong>: <code>org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat</code></li>
 	<li><strong>OutputFormat</strong>: <code>org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</code></li>
 </ul><p><a href="http://hadoop.apache.org">Hadoop’s</a> native binary data file is the <a href="http://wiki.apache.org/hadoop/SequenceFile">SequenceFile</a>. Every <code>Writable</code> object implements methods that enable it to both read itself <em>from</em> and write itself <em>to</em> a SequenceFile. Because both <code>FaunusVertex</code> and <code>FaunusEdge</code> implement <code>Writable</code>, they can be captured by a SequenceFile. Moreover, given that a SequenceFile is a binary format, it supports a more compact representation that found with other text-based formats such as <a class="internal present" href="GraphSON-Format.html">GraphSON</a>.</p>

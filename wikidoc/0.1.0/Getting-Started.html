@@ -49,9 +49,9 @@
   <div class="wrap">
   <div id="wiki-body" class="gollum-textile-content">
     <div id="template">
-      <p><span class="float-left"><span><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/gremlin-elephant.png" width="120px" /></span></span> Faunus requires that the user have access to a <a href="http://hadoop.apache.org/">Hadoop</a> cluster. If a Hadoop cluster is readily available to the user, then Faunus is easy to get up and running. If not, then the provided <a href="http://whirr.apache.org/">Whirr</a> recipe can be leveraged to spawn a Hadoop cluster on <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> (see the following <a href="https://github.com/thinkaurelius/faunus/wiki/Running-Faunus-on-Amazon-EC2">tutorial</a>) or a local instance of Hadoop can be run in pseudo-cluster mode (see the following <a href="http://hadoop.apache.org/common/docs/stable/single_node_setup.html">tutorial</a>). This section will discuss the pseudo-cluster approach for those users just getting started with Hadoop (and Faunus). For more experienced Hadoop users, the examples below can be easily adapted to work with a non-local Hadoop cluster (e.g. simply change the Hadoop configuration to point to the accessible cluster (<code>$HADOOP_CONF_DIR</code>).</p>
+      <p><span class="float-left"><span><img src="images/gremlin-elephant.png" width="120px" /></span></span> Faunus requires that the user have access to a <a href="http://hadoop.apache.org/">Hadoop</a> cluster. If a Hadoop cluster is readily available to the user, then Faunus is easy to get up and running. If not, then the provided <a href="http://whirr.apache.org/">Whirr</a> recipe can be leveraged to spawn a Hadoop cluster on <a href="http://aws.amazon.com/ec2/">Amazon EC2</a> (see the following <a href="https://github.com/thinkaurelius/faunus/wiki/Running-Faunus-on-Amazon-EC2">tutorial</a>) or a local instance of Hadoop can be run in pseudo-cluster mode (see the following <a href="http://hadoop.apache.org/common/docs/stable/single_node_setup.html">tutorial</a>). This section will discuss the pseudo-cluster approach for those users just getting started with Hadoop (and Faunus). For more experienced Hadoop users, the examples below can be easily adapted to work with a non-local Hadoop cluster (e.g. simply change the Hadoop configuration to point to the accessible cluster (<code>$HADOOP_CONF_DIR</code>).</p>
 <h2>Starting Hadoop</h2>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/hadoop-logo.jpg" alt="" /></p>
+<p><img src="images/hadoop-logo.jpg" alt="" /></p>
 <p>For using Faunus locally on a single machine, a Hadoop pseudo-cluster can be used. Instructions to set up a <a href="http://hadoop.apache.org/common/docs/stable/single_node_setup.html">pseudo-cluster</a> are provided in the Hadoop documentation. Once the pseudo-cluster has been set up, it can be started by running the start script <code>$HADOOP_HOME/bin/start-all.sh</code>. Once running, Hadoop can be issued jobs (e.g. Faunus jobs).</p>
 <pre><code>~$ start-all.sh
 starting namenode, logging to /Applications/hadoop/hadoop-1.0.3/libexec/../logs/hadoop-marko-namenode-markolaptop.local.out
@@ -59,14 +59,14 @@ localhost: starting datanode, logging to /Applications/hadoop/hadoop-1.0.3/libex
 localhost: starting secondarynamenode, logging to /Applications/hadoop/hadoop-1.0.3/libexec/../logs/hadoop-marko-secondarynamenode-markolaptop.local.out
 starting jobtracker, logging to /Applications/hadoop/hadoop-1.0.3/libexec/../logs/hadoop-marko-jobtracker-markolaptop.local.out
 localhost: starting tasktracker, logging to /Applications/hadoop/hadoop-1.0.3/libexec/../logs/hadoop-marko-tasktracker-markolaptop.local.out</code></pre>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/hdfs-logo.jpg" alt="" /></p>
+<p><img src="images/hdfs-logo.jpg" alt="" /></p>
 <p>To ensure that the installation is running properly, do an <code>ls</code> on Hadoop&#x2019;s distributed file system, <a href="http://hadoop.apache.org/hdfs/"><span class="caps">HDFS</span></a>. This should <strong>not</strong> return a view of the local filesystem, but instead a view of <span class="caps">HDFS</span>.</p>
 <pre><code>faunus$ hadoop fs -ls /
 Found 2 items
 drwxr-xr-x   - marko supergroup          0 2012-07-26 11:55 /tmp
 drwxr-xr-x   - marko supergroup          0 2012-07-26 11:55 /user</code></pre>
 <h2>Using Faunus via Gremlin</h2>
-<p><span class="float-left"><span><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/faunus-head.png" /></span></span></p>
+<p><span class="float-left"><span><img src="images/faunus-head.png" /></span></span></p>
 <p>Faunus can be downloaded from the <a href="https://github.com/thinkaurelius/faunus/wiki/Downloads">downloads section</a> of this project. Faunus provides a <a href="http://gremlin.tinkerpop.com">Gremlin</a> implementation that can be used for convenient interactions with <span class="caps">HDFS</span>, interactions with the supported graph sources (e.g. <a href="http://thinkaurelius.github.com/titan/">Titan</a>), and for constructing Faunus jobs (a chain of 1 or more MapReduce jobs). The Gremlin <a href="http://en.wikipedia.org/wiki/Read%E2%80%93eval%E2%80%93print_loop"><span class="caps">REPL</span></a> is started with <code>bin/gremlin.sh</code> (or <code>gremlin.bat</code> for Windows users).</p>
 <pre><code>faunus$ bin/gremlin.sh 
 
@@ -75,7 +75,7 @@ drwxr-xr-x   - marko supergroup          0 2012-07-26 11:55 /user</code></pre>
 -----oOOo-(_)-oOOo-----
 gremlin&gt;</code></pre>
 <h2>Graph of the Gods Examples</h2>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/graph-of-the-gods.png" alt="" /></p>
+<p><img src="images/graph-of-the-gods.png" alt="" /></p>
 <p>Faunus distributes with a toy graph called <em>The Graph of the Gods</em> (represented in Faunus&#x2019; <a class="internal present" href="GraphSON-Format.html">GraphSON format</a>). This graph has 12 vertices/17 edges and denotes people, places, monsters and their various types of relationships to one another. A diagrammatic representation is provided above and the raw GraphJSON representation is provided below.</p>
 <pre><code>{"name":"saturn","type":"titan","_id":0,"_inE":[{"_label":"father","_id":12,"_outV":1}]}
 {"name":"jupiter","type":"god","_id":1,"_outE":[{"_label":"lives","_id":13,"_inV":4},{"_label":"brother","_id":16,"_inV":3},{"_label":"brother","_id":14,"_inV":2},{"_label":"father","_id":12,"_inV":0}],"_inE":[{"_label":"brother","_id":17,"_outV":3},{"_label":"brother","_id":15,"_outV":2},{"_label":"father","_id":24,"_outV":7}]}
@@ -107,7 +107,7 @@ Found 1 item
 ==&gt;faunusgraph[graphsoninputformat-&gt;graphsonoutputformat]</code></pre>
 <p>The next sections present some simple examples to demonstrate how Faunus, Gremlin, and Hadoop all interact with one another.</p>
 <h3>Vertex Property Value Distribution (Statistic)</h3>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/mapreduce-logo.jpg" alt="" /></p>
+<p><img src="images/mapreduce-logo.jpg" alt="" /></p>
 <p>A <a href="http://en.wikipedia.org/wiki/Frequency_distribution">frequency distribution</a> is simply a count of the number of times a particular item appears in a set. If the set is defined as all the <em>type</em> property values of the vertices in <em>The Graph of the Gods</em>, then a distribution of those values is the number of times that monster, human, demigod, god, etc. appears. This can be computed with the following Gremlin traversal.</p>
 <pre><code>gremlin&gt; g.V.type.groupCount
 12/09/16 14:04:16 INFO mapreduce.FaunusCompiler: Compiled to 1 MapReduce job(s)

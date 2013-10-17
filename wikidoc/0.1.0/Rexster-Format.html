@@ -113,7 +113,7 @@ gremlin&gt; g.V.in('followed_by').name.groupCount()
 ==&gt;ARE YOU LONELY FOR ME	
 ==&gt;...</code></pre>
 <h2>Configuration Cheatsheet</h2>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/rexster-gremlin-elephant.png" /></p>
+<p><img src="images/rexster-gremlin-elephant.png" /></p>
 <p>All settings Rexster specific configuration settings in <code>bin/rexster-input.properties</code> are prefixed with <code>faunus.graph.input.rexster</code>.</p>
 <table><tr><th>Setting </th>
 		<th>Description </th>
@@ -191,9 +191,9 @@ gremlin&gt; g.V.in('followed_by').name.groupCount()
 &lt;/rexster&gt;</code></pre>
 <p>By default, Faunus creates an EC2 security group called <code>jclouds#faunuscluster</code>, which all the Hadoop nodes are created in.  To allow the nodes in this cluster to talk to the Rexster instance, the security group that Rexster is in must allow access to that security group.</p>
 <p>To provide this access, first utilize Whirr to establish the Hadoop cluster (as described <a class="internal present" href="Running-Faunus-on-Amazon-EC2.html">here</a>) and find the <code>jclouds#faunuscluster</code> security group in the Amazon EC2 Console:</p>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/faunus-security-group-screenshot.png" alt="" /></p>
+<p><img src="images/faunus-security-group-screenshot.png" alt="" /></p>
 <p>Take note of the security group identifier.  In the case above, it is <code>sg-02e38b6a</code>.  Edit the Inbound settings for the security group that Rexster is in.  In the following screenshot, Rexster exists in a security group that is aptly named &#x201C;Rexster Group&#x201D;.</p>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/faunus-rexster-security-group-screenshot.png" alt="" /></p>
+<p><img src="images/faunus-rexster-security-group-screenshot.png" alt="" /></p>
 <p>Add a rule that allows the <code>jclouds#faunuscluster</code> to access the Rexster Group over port 8182 (the default port established in <code>rexster.xml</code>).  Utilize the security group identifier as shown in the above screenshot to create this rule.  It is now possible to run a Faunus job against Rexster.</p>
     </div>
   </div>

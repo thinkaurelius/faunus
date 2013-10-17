@@ -53,7 +53,7 @@
   &#x2014; Courtesy of Ricky Ho&#x2019;s <a href="http://horicky.blogspot.com/">Pragmatic Programmer</a> blog.</p>
 <p><a href="http://hadoop.apache.org/">Hadoop</a> is a complex piece of software with a variegation of components including a distributed file system, a  distributed computing framework with job trackers, data nodes, and numerous simultaneously running <span class="caps">JVM</span> instances. With any complex software environment, there are tunings that can be employed to ensure both efficient use of <strong>space</strong> (network bandwidth, hard drive, memory, etc.) and <strong>time</strong> (object creation, combiners, in-memory combiners, etc.). This section presents various tricks to Hadoop/Faunus that can be used to tune Faunus job sequences and developed Faunus MapReduce extensions.</p>
 <h2>Faunus Specific Tunings</h2>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/faunus-head-logo.png" alt="" /></p>
+<p><img src="images/faunus-head-logo.png" alt="" /></p>
 <ul><li><strong>Use SequenceFiles for repeated analyses</strong>: The Hadoop <a class="internal present" href="SequenceFile-Format.html">SequenceFile</a> is the most optimal file format for Faunus. If repeated analysis is going to be done on a graph, then it is beneficial to first generate a SequenceFile representation of that graph in <span class="caps">HDFS</span>. This file can then serve as the input for repeated analyses. Generating a SequenceFile is as simple as running the identity step <code>g._</code> with the following Faunus properties.</li>
 </ul><pre><code>faunus.graph.output.format=org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat</code></pre>
 <ul><li><strong>Avoid text-based representations of graphs</strong>: The <a class="internal present" href="GraphSON-Format.html">GraphSON</a> representation of a graph is easy to read/write, but inefficient. DBpedia as a GraphSON file is 23gigs and 11gigs as a <a class="internal present" href="SequenceFile-Format.html">SequenceFile</a>. If possible, avoid using verbose text-based formats.</li>
@@ -65,7 +65,7 @@
 </ul><ul><li><strong>If no graph output needed, use <code>NoOpOutputFormat</code></strong>: If a graph derivation is not required, but instead some sideeffect computation, then set the final output format of the graph to be <code>NoOpOutputFormat</code>. If no output is needed at all, used Hadoop&#x2019;s native <code>NullOutputFormat</code>.</li>
 </ul><pre><code>faunus.graph.output.format=com.thinkaurelius.faunus.formats.noop.NoOpOutputFormat</code></pre>
 <h2>Hadoop Specific Tunings</h2>
-<p><img src="https://github.com/thinkaurelius/faunus/raw/master/doc/images/hadoop-logo.jpg" alt="" /></p>
+<p><img src="images/hadoop-logo.jpg" alt="" /></p>
 <p>There are numerous Hadoop specific tunings. Below is a collection of blog posts that discuss tips and tricks for Hadoop.</p>
 <ul><li><a href="http://wiki.apache.org/hadoop/HowManyMapsAndReduces">http://wiki.apache.org/hadoop/HowManyMapsAndReduces</a></li>
 	<li><a href="http://allthingshadoop.com/2010/04/28/map-reduce-tips-tricks-your-first-real-cluster/">http://allthingshadoop.com/2010/04/28/map-reduce-tips-tricks-your-first-real-cluster/</a></li>
