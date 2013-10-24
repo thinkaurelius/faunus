@@ -157,8 +157,8 @@
         <dependency>
             <groupId>org.apache.mrunit</groupId>
             <artifactId>mrunit</artifactId>
-            <version>0.9.0-incubating</version>
-            <classifier>hadoop1</classifier>
+            <version>1.0.0</version>
+            <classifier>hadoop2</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>
