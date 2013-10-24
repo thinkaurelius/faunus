@@ -1071,7 +1071,7 @@ public class FaunusPipeline {
             this.state.assertNotLocked();
             ((Class<? extends MapReduceFormat>) this.graph.getGraphOutputFormat()).getConstructor().newInstance().addMapReduceJobs(this.compiler);
         }
-        this.compiler.completeSequence();
+        //this.compiler.completeSequence();
         ToolRunner.run(this.compiler, new String[]{script, showHeader.toString()});
     }
 

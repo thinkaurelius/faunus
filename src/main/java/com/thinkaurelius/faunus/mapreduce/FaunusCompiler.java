@@ -21,6 +21,8 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.OutputFormat;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.chain.ChainMapper;
+import org.apache.hadoop.mapreduce.lib.chain.ChainReducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -41,6 +43,8 @@ import java.util.Map;
  */
 public class FaunusCompiler extends Configured implements Tool {
 
+    enum State {MAPPER, REDUCER, NONE}
+
     private static final String MAPREDUCE_MAP_OUTPUT_COMPRESS = "mapreduce.map.output.compress";
     private static final String MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC = "mapreduce.map.output.compress.codec";
     private static final String MAPREDUCE_JOB_JAR = "mapreduce.job.jar";
@@ -53,15 +57,7 @@ public class FaunusCompiler extends Configured implements Tool {
 
     protected final List<Job> jobs = new ArrayList<Job>();
 
-    private final List<Class<? extends Mapper>> mapSequenceClasses = new ArrayList<Class<? extends Mapper>>();
-    private Class<? extends WritableComparable> mapOutputKey = NullWritable.class;
-    private Class<? extends WritableComparable> mapOutputValue = NullWritable.class;
-    private Class<? extends WritableComparable> outputKey = NullWritable.class;
-    private Class<? extends WritableComparable> outputValue = NullWritable.class;
-
-    private Class<? extends Reducer> combinerClass = null;
-    private Class<? extends WritableComparator> comparatorClass = null;
-    private Class<? extends Reducer> reduceClass = null;
+    private State state = State.NONE;
 
     private static final Class<? extends InputFormat> INTERMEDIATE_INPUT_FORMAT = SequenceFileInputFormat.class;
     private static final Class<? extends OutputFormat> INTERMEDIATE_OUTPUT_FORMAT = SequenceFileOutputFormat.class;
@@ -74,30 +70,11 @@ public class FaunusCompiler extends Configured implements Tool {
         this.addConfiguration(this.graph.getConf());
     }
 
-    private String toStringOfJob(final Class sequenceClass) {
-        final List<String> list = new ArrayList<String>();
-        for (final Class klass : this.mapSequenceClasses) {
-            list.add(klass.getCanonicalName());
-        }
-        if (null != reduceClass) {
-            list.add(this.reduceClass.getCanonicalName());
-        }
-        return sequenceClass.getSimpleName() + list.toString();
-    }
-
-    private String[] toStringMapSequenceClasses() {
-        final List<String> list = new ArrayList<String>();
-        for (final Class klass : this.mapSequenceClasses) {
-            list.add(klass.getName());
-        }
-        return list.toArray(new String[list.size()]);
-    }
-
     private void addConfiguration(final Configuration configuration) {
         for (final Map.Entry<String, String> entry : configuration) {
             if (entry.getKey().equals(PATH_ENABLED) & Boolean.valueOf(entry.getValue()))
                 this.pathEnabled = true;
-            this.getConf().set(entry.getKey() + "-" + this.mapSequenceClasses.size(), entry.getValue());
+            //this.getConf().set(entry.getKey() + "-" + this.mapSequenceClasses.size(), entry.getValue());
             this.getConf().set(entry.getKey(), entry.getValue());
         }
     }
@@ -111,17 +88,30 @@ public class FaunusCompiler extends Configured implements Tool {
                              final Class<? extends WritableComparable> reduceOutputKey,
                              final Class<? extends WritableComparable> reduceOutputValue,
                              final Configuration configuration) {
+        try {
+            final Job job;
+            if (State.NONE == this.state || State.REDUCER == this.state) {
+                job = Job.getInstance(this.getConf());
+                this.jobs.add(job);
+            } else {
+                job = this.jobs.get(this.jobs.size() - 1);
+            }
+            job.setNumReduceTasks(this.getConf().getInt("mapreduce.job.reduces", 1));
 
-        this.addConfiguration(configuration);
-        this.mapSequenceClasses.add(mapper);
-        this.combinerClass = combiner;
-        this.reduceClass = reducer;
-        this.comparatorClass = comparator;
-        this.mapOutputKey = mapOutputKey;
-        this.mapOutputValue = mapOutputValue;
-        this.outputKey = reduceOutputKey;
-        this.outputValue = reduceOutputValue;
-        this.completeSequence();
+            ChainMapper.addMapper(job, mapper, NullWritable.class, FaunusVertex.class, mapOutputKey, mapOutputValue, configuration);
+            ChainReducer.setReducer(job, reducer, mapOutputKey, mapOutputValue, reduceOutputKey, reduceOutputValue, configuration);
+            if (null != comparator)
+                job.setSortComparatorClass(comparator);
+            if (null != combiner)
+                job.setCombinerClass(combiner);
+            if (null == job.getConfiguration().get(MAPREDUCE_MAP_OUTPUT_COMPRESS, null))
+                job.getConfiguration().setBoolean(MAPREDUCE_MAP_OUTPUT_COMPRESS, true);
+            if (null == job.getConfiguration().get(MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC, null))
+                job.getConfiguration().setClass(MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC, DefaultCodec.class, CompressionCodec.class);
+            this.state = State.REDUCER;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     public void addMapReduce(final Class<? extends Mapper> mapper,
@@ -133,15 +123,7 @@ public class FaunusCompiler extends Configured implements Tool {
                              final Class<? extends WritableComparable> reduceOutputValue,
                              final Configuration configuration) {
 
-        this.addConfiguration(configuration);
-        this.mapSequenceClasses.add(mapper);
-        this.combinerClass = combiner;
-        this.reduceClass = reducer;
-        this.mapOutputKey = mapOutputKey;
-        this.mapOutputValue = mapOutputValue;
-        this.outputKey = reduceOutputKey;
-        this.outputValue = reduceOutputValue;
-        this.completeSequence();
+        this.addMapReduce(mapper, combiner, reducer, null, mapOutputKey, mapOutputValue, reduceOutputKey, reduceOutputValue, configuration);
     }
 
     public void addMap(final Class<? extends Mapper> mapper,
@@ -149,58 +131,26 @@ public class FaunusCompiler extends Configured implements Tool {
                        final Class<? extends WritableComparable> mapOutputValue,
                        final Configuration configuration) {
 
-        this.addConfiguration(configuration);
-        this.mapSequenceClasses.add(mapper);
-        this.mapOutputKey = mapOutputKey;
-        this.mapOutputValue = mapOutputValue;
-        this.outputKey = mapOutputKey;
-        this.outputValue = mapOutputValue;
-
-    }
-
-    public void completeSequence() {
-        if (this.mapSequenceClasses.size() > 0) {
-            this.getConf().setStrings(MapSequence.MAP_CLASSES, toStringMapSequenceClasses());
+        try {
             final Job job;
-            try {
-                job = Job.getInstance(this.getConf(), this.toStringOfJob(MapSequence.class));
-            } catch (IOException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
-
-            job.setJarByClass(FaunusCompiler.class);
-            job.setMapperClass(MapSequence.Map.class);
-            if (null != this.reduceClass) {
-                job.setReducerClass(this.reduceClass);
-                if (null != this.combinerClass)
-                    job.setCombinerClass(this.combinerClass);
-                // if there is a reduce task, compress the map output to limit network traffic
-                if (null == job.getConfiguration().get(MAPREDUCE_MAP_OUTPUT_COMPRESS, null))
-                    job.getConfiguration().setBoolean(MAPREDUCE_MAP_OUTPUT_COMPRESS, true);
-                if (null == job.getConfiguration().get(MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC, null))
-                    job.getConfiguration().setClass(MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC, DefaultCodec.class, CompressionCodec.class);
-            } else {
+            if (State.NONE == this.state) {
+                job = Job.getInstance(this.getConf());
                 job.setNumReduceTasks(0);
+                this.jobs.add(job);
+            } else {
+                job = this.jobs.get(this.jobs.size() - 1);
             }
 
-            job.setMapOutputKeyClass(this.mapOutputKey);
-            job.setMapOutputValueClass(this.mapOutputValue);
-            if (null != this.comparatorClass)
-                job.setSortComparatorClass(this.comparatorClass);
-            // else
-            //   job.setSortComparatorClass(NullWritable.Comparator.class);
-            job.setOutputKeyClass(this.outputKey);
-            job.setOutputValueClass(this.outputValue);
+            if (State.MAPPER == this.state || State.NONE == this.state) {
+                ChainMapper.addMapper(job, mapper, NullWritable.class, FaunusVertex.class, mapOutputKey, mapOutputValue, configuration);
+                this.state = State.MAPPER;
+            } else {
+                ChainReducer.addMapper(job, mapper, NullWritable.class, FaunusVertex.class, mapOutputKey, mapOutputValue, configuration);
+                this.state = State.REDUCER;
+            }
 
-
-            this.jobs.add(job);
-
-            this.setConf(new Configuration());
-            this.addConfiguration(this.graph.getConf());
-            this.mapSequenceClasses.clear();
-            this.combinerClass = null;
-            this.reduceClass = null;
-            this.comparatorClass = null;
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -250,7 +200,7 @@ public class FaunusCompiler extends Configured implements Tool {
         for (int i = 0; i < this.jobs.size(); i++) {
             final Job job = this.jobs.get(i);
             job.getConfiguration().setBoolean(PATH_ENABLED, this.pathEnabled);
-            job.getConfiguration().set(MAPREDUCE_JOB_JAR, hadoopFileJar);
+            job.setJar(hadoopFileJar);
 
             FileOutputFormat.setOutputPath(job, new Path(outputJobPrefix + "-" + i));
 
