@@ -67,8 +67,8 @@ public abstract class TitanOutputFormat extends NoOpOutputFormat implements MapR
                 final int reduceTasks = (int) (totalSize.doubleValue() / splitSize.doubleValue());
                 job.setNumReduceTasks((reduceTasks == 0) ? 1 : reduceTasks);
             } else {
-                if (-1 == configuration.getInt("mapred.reduce.tasks", -1)) {
-                    throw new InterruptedException("The input to Titan is not in HDFS and source size can not be determined -- set mapred.reduce.tasks");
+                if (-1 == configuration.getInt("mapreduce.job.reduces", -1)) {
+                    throw new InterruptedException("The input to Titan is not in HDFS and source size can not be determined -- set mapreduce.job.reduces");
                 }
             }
         } catch (final ClassNotFoundException e) {

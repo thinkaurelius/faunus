@@ -41,8 +41,9 @@ import java.util.Map;
  */
 public class FaunusCompiler extends Configured implements Tool {
 
-    private static final String MAPRED_COMPRESS_MAP_OUTPUT = "mapred.compress.map.output";
-    private static final String MAPRED_MAP_OUTPUT_COMPRESSION_CODEC = "mapred.map.output.compression.codec";
+    private static final String MAPREDUCE_MAP_OUTPUT_COMPRESS = "mapreduce.map.output.compress";
+    private static final String MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC = "mapreduce.map.output.compress.codec";
+    private static final String MAPREDUCE_JOB_JAR = "mapreduce.job.jar";
 
     public static final String PATH_ENABLED = Tokens.makeNamespace(FaunusCompiler.class) + ".pathEnabled";
     public static final String TESTING = Tokens.makeNamespace(FaunusCompiler.class) + ".testing";
@@ -162,7 +163,7 @@ public class FaunusCompiler extends Configured implements Tool {
             this.getConf().setStrings(MapSequence.MAP_CLASSES, toStringMapSequenceClasses());
             final Job job;
             try {
-                job = new Job(this.getConf(), this.toStringOfJob(MapSequence.class));
+                job = Job.getInstance(this.getConf(), this.toStringOfJob(MapSequence.class));
             } catch (IOException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
@@ -174,10 +175,10 @@ public class FaunusCompiler extends Configured implements Tool {
                 if (null != this.combinerClass)
                     job.setCombinerClass(this.combinerClass);
                 // if there is a reduce task, compress the map output to limit network traffic
-                if (null == job.getConfiguration().get(MAPRED_COMPRESS_MAP_OUTPUT, null))
-                    job.getConfiguration().setBoolean(MAPRED_COMPRESS_MAP_OUTPUT, true);
-                if (null == job.getConfiguration().get(MAPRED_MAP_OUTPUT_COMPRESSION_CODEC, null))
-                    job.getConfiguration().setClass(MAPRED_MAP_OUTPUT_COMPRESSION_CODEC, DefaultCodec.class, CompressionCodec.class);
+                if (null == job.getConfiguration().get(MAPREDUCE_MAP_OUTPUT_COMPRESS, null))
+                    job.getConfiguration().setBoolean(MAPREDUCE_MAP_OUTPUT_COMPRESS, true);
+                if (null == job.getConfiguration().get(MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC, null))
+                    job.getConfiguration().setClass(MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC, DefaultCodec.class, CompressionCodec.class);
             } else {
                 job.setNumReduceTasks(0);
             }
@@ -208,7 +209,7 @@ public class FaunusCompiler extends Configured implements Tool {
             return;
         }
 
-        String hadoopFileJar = graph.getConf().get("mapred.jar", null);
+        String hadoopFileJar = graph.getConf().get(MAPREDUCE_JOB_JAR, null);
         if (null == hadoopFileJar) {
             if (new File("target/" + Tokens.FAUNUS_JOB_JAR).exists()) {
                 hadoopFileJar = "target/" + Tokens.FAUNUS_JOB_JAR;
@@ -249,7 +250,7 @@ public class FaunusCompiler extends Configured implements Tool {
         for (int i = 0; i < this.jobs.size(); i++) {
             final Job job = this.jobs.get(i);
             job.getConfiguration().setBoolean(PATH_ENABLED, this.pathEnabled);
-            job.getConfiguration().set("mapred.jar", hadoopFileJar);
+            job.getConfiguration().set(MAPREDUCE_JOB_JAR, hadoopFileJar);
 
             FileOutputFormat.setOutputPath(job, new Path(outputJobPrefix + "-" + i));
 

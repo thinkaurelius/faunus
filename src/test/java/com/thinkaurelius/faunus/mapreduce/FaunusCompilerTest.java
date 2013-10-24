@@ -86,32 +86,32 @@ public class FaunusCompilerTest extends TestCase {
 
     public void testConfigurationPersistence() throws Exception {
         Configuration conf = new Configuration();
-        conf.setInt("mapred.reduce.tasks", 2);
+        conf.setInt("mapreduce.job.reduces", 2);
         conf.setBoolean(TitanOutputFormat.FAUNUS_GRAPH_OUTPUT_TITAN_INFER_SCHEMA, false);
         FaunusGraph graph = new FaunusGraph(conf);
         FaunusPipeline pipeline = new FaunusPipeline(graph);
         FaunusCompiler compiler = pipeline.getCompiler();
         TitanOutputFormat outputFormat = new TitanCassandraOutputFormat();
 
-        assertEquals(graph.getConf().getInt("mapred.reduce.tasks", -1), 2);
-        assertEquals(compiler.getConf().getInt("mapred.reduce.tasks", -1), 2);
+        assertEquals(graph.getConf().getInt("mapreduce.job.reduces", -1), 2);
+        assertEquals(compiler.getConf().getInt("mapreduce.job.reduces", -1), 2);
         assertFalse(graph.getConf().getBoolean(TitanOutputFormat.FAUNUS_GRAPH_OUTPUT_TITAN_INFER_SCHEMA, true));
         assertFalse(compiler.getConf().getBoolean(TitanOutputFormat.FAUNUS_GRAPH_OUTPUT_TITAN_INFER_SCHEMA, true));
         outputFormat.addMapReduceJobs(compiler);
         assertEquals(compiler.jobs.size(), 1);
-        assertEquals(compiler.jobs.get(0).getConfiguration().getInt("mapred.reduce.tasks", -1), 2);
+        assertEquals(compiler.jobs.get(0).getConfiguration().getInt("mapreduce.job.reduces", -1), 2);
         assertFalse(compiler.jobs.get(0).getConfiguration().getBoolean(TitanOutputFormat.FAUNUS_GRAPH_OUTPUT_TITAN_INFER_SCHEMA, true));
-        assertEquals(graph.getConf().getInt("mapred.reduce.tasks", -1), 2);
-        assertEquals(compiler.getConf().getInt("mapred.reduce.tasks", -1), 2);
+        assertEquals(graph.getConf().getInt("mapreduce.job.reduces", -1), 2);
+        assertEquals(compiler.getConf().getInt("mapreduce.job.reduces", -1), 2);
 
         compiler.addMap(IdentityMap.Map.class, NullWritable.class, FaunusVertex.class, IdentityMap.createConfiguration());
         compiler.completeSequence();
         assertEquals(compiler.jobs.size(), 2);
-        assertEquals(compiler.jobs.get(0).getConfiguration().getInt("mapred.reduce.tasks", -1), 2);
+        assertEquals(compiler.jobs.get(0).getConfiguration().getInt("mapreduce.job.reduces", -1), 2);
         assertFalse(compiler.jobs.get(0).getConfiguration().getBoolean(TitanOutputFormat.FAUNUS_GRAPH_OUTPUT_TITAN_INFER_SCHEMA, true));
-        assertEquals(compiler.jobs.get(1).getConfiguration().getInt("mapred.reduce.tasks", -1), 0);
+        assertEquals(compiler.jobs.get(1).getConfiguration().getInt("mapreduce.job.reduces", -1), 0);
         assertFalse(compiler.jobs.get(1).getConfiguration().getBoolean(TitanOutputFormat.FAUNUS_GRAPH_OUTPUT_TITAN_INFER_SCHEMA, true));
-        assertEquals(graph.getConf().getInt("mapred.reduce.tasks", -1), 2);
-        assertEquals(compiler.getConf().getInt("mapred.reduce.tasks", -1), 2);
+        assertEquals(graph.getConf().getInt("mapreduce.job.reduces", -1), 2);
+        assertEquals(compiler.getConf().getInt("mapreduce.job.reduces", -1), 2);
     }
 }

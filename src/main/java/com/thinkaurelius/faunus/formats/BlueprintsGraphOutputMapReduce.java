@@ -79,8 +79,8 @@ public class BlueprintsGraphOutputMapReduce {
 
     public static Configuration createConfiguration() {
         final Configuration configuration = new EmptyConfiguration();
-        configuration.setBoolean("mapred.map.tasks.speculative.execution", false);
-        configuration.setBoolean("mapred.reduce.tasks.speculative.execution", false);
+        configuration.setBoolean("mapreduce.map.speculative", false);
+        configuration.setBoolean("mapreduce.reduce.speculative", false);
         return configuration;
     }
 
