@@ -96,7 +96,7 @@ public class FaunusCompiler extends Configured implements Tool {
             } else {
                 job = this.jobs.get(this.jobs.size() - 1);
             }
-            job.setNumReduceTasks(this.getConf().getInt("mapreduce.job.reduces", 1));
+            job.setNumReduceTasks(this.getConf().getInt("mapreduce.job.reduces", this.getConf().getInt("mapreduce.tasktracker.reduce.tasks.maximum", 1)));
 
             ChainMapper.addMapper(job, mapper, NullWritable.class, FaunusVertex.class, mapOutputKey, mapOutputValue, configuration);
             ChainReducer.setReducer(job, reducer, mapOutputKey, mapOutputValue, reduceOutputKey, reduceOutputValue, configuration);

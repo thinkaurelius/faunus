@@ -54,9 +54,9 @@ public abstract class TitanOutputFormat extends NoOpOutputFormat implements MapR
         try {
             final Configuration configuration = job.getConfiguration();
             if (FileInputFormat.class.isAssignableFrom(job.getInputFormatClass())) {
-                final Long splitSize = configuration.getLong("mapred.max.split.size", -1);
+                final Long splitSize = configuration.getLong("mapreduce.input.fileinputformat.split.maxsize", -1);
                 if (splitSize == -1)
-                    throw new InterruptedException("Can not determine the number of reduce tasks if mapred.max.split.size is not set");
+                    throw new InterruptedException("Can not determine the number of reduce tasks if mapreduce.input.fileinputformat.split.maxsize is not set");
                 final Path[] paths = FileInputFormat.getInputPaths(job);
                 final PathFilter filter = FileInputFormat.getInputPathFilter(job);
                 final FileSystem fs = FileSystem.get(configuration);
