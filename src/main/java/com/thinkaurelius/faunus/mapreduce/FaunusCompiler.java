@@ -45,6 +45,7 @@ public class FaunusCompiler extends Configured implements Tool {
 
     enum State {MAPPER, REDUCER, NONE}
 
+    private static final String ARROW = " > ";
     private static final String MAPREDUCE_MAP_OUTPUT_COMPRESS = "mapreduce.map.output.compress";
     private static final String MAPREDUCE_MAP_OUTPUT_COMPRESS_CODEC = "mapreduce.map.output.compress.codec";
     private static final String MAPREDUCE_JOB_JAR = "mapreduce.job.jar";
@@ -70,6 +71,10 @@ public class FaunusCompiler extends Configured implements Tool {
         this.addConfiguration(this.graph.getConf());
     }
 
+    private String makeClassName(final Class klass) {
+        return klass.getCanonicalName().replace(klass.getPackage().getName() + ".", "");
+    }
+
     private void addConfiguration(final Configuration configuration) {
         for (final Map.Entry<String, String> entry : configuration) {
             if (entry.getKey().equals(PATH_ENABLED) & Boolean.valueOf(entry.getValue()))
@@ -77,6 +82,18 @@ public class FaunusCompiler extends Configured implements Tool {
             //this.getConf().set(entry.getKey() + "-" + this.mapSequenceClasses.size(), entry.getValue());
             this.getConf().set(entry.getKey(), entry.getValue());
         }
+    }
+
+    public void addMapReduce(final Class<? extends Mapper> mapper,
+                             final Class<? extends Reducer> combiner,
+                             final Class<? extends Reducer> reducer,
+                             final Class<? extends WritableComparable> mapOutputKey,
+                             final Class<? extends WritableComparable> mapOutputValue,
+                             final Class<? extends WritableComparable> reduceOutputKey,
+                             final Class<? extends WritableComparable> reduceOutputValue,
+                             final Configuration configuration) {
+
+        this.addMapReduce(mapper, combiner, reducer, null, mapOutputKey, mapOutputValue, reduceOutputKey, reduceOutputValue, configuration);
     }
 
     public void addMapReduce(final Class<? extends Mapper> mapper,
@@ -92,9 +109,11 @@ public class FaunusCompiler extends Configured implements Tool {
             final Job job;
             if (State.NONE == this.state || State.REDUCER == this.state) {
                 job = Job.getInstance(this.getConf());
+                job.setJobName(makeClassName(mapper) + ARROW + makeClassName(reducer));
                 this.jobs.add(job);
             } else {
                 job = this.jobs.get(this.jobs.size() - 1);
+                job.setJobName(job.getJobName() + ARROW + makeClassName(mapper) + ARROW + makeClassName(reducer));
             }
             job.setNumReduceTasks(this.getConf().getInt("mapreduce.job.reduces", this.getConf().getInt("mapreduce.tasktracker.reduce.tasks.maximum", 1)));
 
@@ -114,18 +133,6 @@ public class FaunusCompiler extends Configured implements Tool {
         }
     }
 
-    public void addMapReduce(final Class<? extends Mapper> mapper,
-                             final Class<? extends Reducer> combiner,
-                             final Class<? extends Reducer> reducer,
-                             final Class<? extends WritableComparable> mapOutputKey,
-                             final Class<? extends WritableComparable> mapOutputValue,
-                             final Class<? extends WritableComparable> reduceOutputKey,
-                             final Class<? extends WritableComparable> reduceOutputValue,
-                             final Configuration configuration) {
-
-        this.addMapReduce(mapper, combiner, reducer, null, mapOutputKey, mapOutputValue, reduceOutputKey, reduceOutputValue, configuration);
-    }
-
     public void addMap(final Class<? extends Mapper> mapper,
                        final Class<? extends WritableComparable> mapOutputKey,
                        final Class<? extends WritableComparable> mapOutputValue,
@@ -136,9 +143,11 @@ public class FaunusCompiler extends Configured implements Tool {
             if (State.NONE == this.state) {
                 job = Job.getInstance(this.getConf());
                 job.setNumReduceTasks(0);
+                job.setJobName(makeClassName(mapper));
                 this.jobs.add(job);
             } else {
                 job = this.jobs.get(this.jobs.size() - 1);
+                job.setJobName(job.getJobName() + ARROW + makeClassName(mapper));
             }
 
             if (State.MAPPER == this.state || State.NONE == this.state) {
