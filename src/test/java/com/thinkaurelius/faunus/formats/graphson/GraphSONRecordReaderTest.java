@@ -11,6 +11,7 @@ import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ public class GraphSONRecordReaderTest extends BaseTest {
     public void testRecordReader() throws Exception {
         GraphSONRecordReader reader = new GraphSONRecordReader(VertexQueryFilter.create(new EmptyConfiguration()));
         reader.initialize(new FileSplit(new Path(GraphSONRecordReaderTest.class.getResource("graph-of-the-gods.json").toURI()), 0, Long.MAX_VALUE, new String[]{}),
-                new TaskAttemptContext(new Configuration(), new TaskAttemptID()));
+                new TaskAttemptContextImpl(new Configuration(), new TaskAttemptID()));
         int counter = 0;
         Map<Long, FaunusVertex> graph = new HashMap<Long, FaunusVertex>();
         while (reader.nextKeyValue()) {
@@ -43,7 +44,7 @@ public class GraphSONRecordReaderTest extends BaseTest {
         config.set(VertexQueryFilter.FAUNUS_GRAPH_INPUT_VERTEX_QUERY_FILTER, "v.query().direction(OUT)");
         GraphSONRecordReader reader = new GraphSONRecordReader(VertexQueryFilter.create(config));
         reader.initialize(new FileSplit(new Path(GraphSONRecordReaderTest.class.getResource("graph-of-the-gods.json").toURI()), 0, Long.MAX_VALUE, new String[]{}),
-                new TaskAttemptContext(new Configuration(), new TaskAttemptID()));
+                new TaskAttemptContextImpl(new Configuration(), new TaskAttemptID()));
         int counter = 0;
         while (reader.nextKeyValue()) {
             counter++;
@@ -60,7 +61,7 @@ public class GraphSONRecordReaderTest extends BaseTest {
         config.set(VertexQueryFilter.FAUNUS_GRAPH_INPUT_VERTEX_QUERY_FILTER, "v.query().limit(0)");
         GraphSONRecordReader reader = new GraphSONRecordReader(VertexQueryFilter.create(config));
         reader.initialize(new FileSplit(new Path(GraphSONRecordReaderTest.class.getResource("graph-of-the-gods.json").toURI()), 0, Long.MAX_VALUE, new String[]{}),
-                new TaskAttemptContext(new Configuration(), new TaskAttemptID()));
+                new TaskAttemptContextImpl(new Configuration(), new TaskAttemptID()));
         int counter = 0;
         while (reader.nextKeyValue()) {
             counter++;

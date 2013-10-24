@@ -4,9 +4,9 @@ import com.thinkaurelius.faunus.BaseTest;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.NullWritable;
-import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.TaskAttemptID;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
+import org.apache.hadoop.mapreduce.task.TaskAttemptContextImpl;
 
 /**
  * @author Marko A. Rodriguez (http://markorodriguez.com)
@@ -18,7 +18,7 @@ public class RDFRecordReaderTest extends BaseTest {
         conf.set(RDFInputFormat.FAUNUS_GRAPH_INPUT_RDF_FORMAT, "n-triples");
         RDFRecordReader reader = new RDFRecordReader(conf);
         reader.initialize(new FileSplit(new Path(RDFRecordReaderTest.class.getResource("graph-example-1.ntriple").toURI()), 0, Long.MAX_VALUE, new String[]{}),
-                new TaskAttemptContext(conf, new TaskAttemptID()));
+                new TaskAttemptContextImpl(conf, new TaskAttemptID()));
         int counter = 0;
         while (reader.nextKeyValue()) {
             assertEquals(reader.getCurrentKey(), NullWritable.get());

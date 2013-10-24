@@ -9,14 +9,14 @@ case `uname` in
 esac
 
 # Find Hadoop
-if [ "$HADOOP_PREFIX" != "" ] ; then
-  CP=$CP:$HADOOP_PREFIX/conf
-elif [ "$HADOOP_CONF_DIR" != "" ] ; then
+if [ "$HADOOP_CONF_DIR" != "" ] ; then
   CP=$CP:$HADOOP_CONF_DIR
 elif [ "$HADOOP_CONF" != "" ] ; then
   CP=$CP:$HADOOP_CONF
+elif [ "$HADOOP_PREFIX" != "" ] ; then
+  CP=$CP:$HADOOP_PREFIX/etc/hadoop
 else
-  CP=$CP:$HADOOP_HOME/conf
+  CP=$CP:$HADOOP_HOME/etc/hadoop
 fi
 
 #echo $CP
