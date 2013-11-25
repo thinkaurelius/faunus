@@ -34,11 +34,12 @@ import static com.tinkerpop.blueprints.Direction.OUT;
 /**
  * BlueprintsGraphOutputMapReduce will write a [NullWritable, FaunusVertex] stream to a Blueprints-enabled graph.
  * This is useful for bulk loading a Faunus graph into a Blueprints graph.
- * Graph writing happens in two distinction phase.
- * During the Map phase, all the vertices of the graph are written.
- * During the Reduce phase, all the edges of the graph are written.
- * Each stage is embarrassingly parallel with Map-to-Reduce communication only used to communicate generated vertex ids.
- * The output of the Reduce phase is a degenerate graph and is not considered viable for consumption.
+ * Graph writing happens in three distinction phase.
+ * During the first Map phase, all the vertices of the graph are written.
+ * During the first Reduce phase, an id-to-id distributed map of the adjacency pairs is serialized.
+ * During the second Map phase, all the edges of the graph are written.
+ * Each write stage is embarrassingly parallel with reduce communication only used to communicate generated vertex ids.
+ * The output of the final Map phase is a degenerate graph and is not considered viable for consumption.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
@@ -64,7 +65,7 @@ public class BlueprintsGraphOutputMapReduce {
     public static final String FAUNUS_GRAPH_OUTPUT_BLUEPRINTS_SCRIPT_FILE = "faunus.graph.output.blueprints.script-file";
 
     public static final Logger LOGGER = Logger.getLogger(BlueprintsGraphOutputMapReduce.class);
-    // some random property that will 'never' be used by anyone
+    // some random properties that will 'never' be used by anyone
     public static final String BLUEPRINTS_ID = "_bId0192834";
     public static final String ID_MAP_KEY = "_iDMaPKeY";
 
