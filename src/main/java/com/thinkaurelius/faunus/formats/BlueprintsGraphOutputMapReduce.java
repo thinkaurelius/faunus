@@ -140,7 +140,7 @@ public class BlueprintsGraphOutputMapReduce {
                 this.longWritable.set(value.getIdAsLong());
                 value.getProperties().clear();  // no longer needed in reduce phase
                 value.setProperty(BLUEPRINTS_ID, blueprintsVertex.getId()); // need this for id resolution in reduce phase
-                value.removeEdges(Tokens.Action.DROP, IN); // no longer needed in reduce phase
+                value.removeEdges(Tokens.Action.DROP, IN); // no longer needed in second map phase
                 context.write(this.longWritable, this.vertexHolder.set('v', value));
             } catch (final Exception e) {
                 if (this.graph instanceof TransactionalGraph) {
@@ -159,7 +159,7 @@ public class BlueprintsGraphOutputMapReduce {
                     ((TransactionalGraph) this.graph).commit();
                     context.getCounter(Counters.SUCCESSFUL_TRANSACTIONS).increment(1l);
                 } catch (Exception e) {
-                    LOGGER.error("Could not commit transaction during Map.cleanup():", e);
+                    LOGGER.error("Could not commit transaction during VertexMap.cleanup():", e);
                     ((TransactionalGraph) this.graph).rollback();
                     context.getCounter(Counters.FAILED_TRANSACTIONS).increment(1l);
                     throw new IOException(e.getMessage(), e);
@@ -281,7 +281,7 @@ public class BlueprintsGraphOutputMapReduce {
                     ((TransactionalGraph) this.graph).commit();
                     context.getCounter(Counters.SUCCESSFUL_TRANSACTIONS).increment(1l);
                 } catch (Exception e) {
-                    LOGGER.error("Could not commit transaction during Reduce.cleanup():", e);
+                    LOGGER.error("Could not commit transaction during EdgeMap.cleanup():", e);
                     ((TransactionalGraph) this.graph).rollback();
                     context.getCounter(Counters.FAILED_TRANSACTIONS).increment(1l);
                     throw new IOException(e.getMessage(), e);
