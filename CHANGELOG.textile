@@ -5,6 +5,18 @@ Faunus: Graph Analytics Engine
 
 h2. Faunus 0.x.y
 
+h3. Version 0.4.2 (NOT OFFICIALLY RELEASED YET)
+
+```xml
+<dependency>
+  <groupId>com.thinkaurelius.faunus</groupId>
+  <artifactId>faunus</artifactId>
+  <version>0.4.2-SNAPSHOT</version>
+</dependency>
+```
+
+* Added Titan ElasticSearch dependency so its available in the Hadoop job jar
+
 h3. Version 0.4.1 (Nov 24, 2013)
 
 ```xml
