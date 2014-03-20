@@ -80,7 +80,17 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
         for (final String property : configuration.getStringCollection(RDFInputFormat.FAUNUS_GRAPH_INPUT_RDF_AS_PROPERTIES)) {
             this.asProperties.add(property.trim());
         }
-        this.parser = Rio.createParser(formats.get(configuration.get(RDFInputFormat.FAUNUS_GRAPH_INPUT_RDF_FORMAT)));
+
+        String formatName = configuration.get(RDFInputFormat.FAUNUS_GRAPH_INPUT_RDF_FORMAT);
+        if (null == formatName) {
+            throw new RuntimeException("RDF format is required. Use " + RDFInputFormat.FAUNUS_GRAPH_INPUT_RDF_FORMAT);
+        }
+        RDFFormat format = formats.get(formatName);
+        if (null == format) {
+            throw new RuntimeException("unknown RDF format: " + formatName);
+        }
+        this.parser = Rio.createParser(format);
+
         this.parser.setRDFHandler(this);
         this.parser.setDatatypeHandling(RDFParser.DatatypeHandling.IGNORE);
     }
