@@ -45,7 +45,7 @@ def Vertex getOrCreateVertex(final FaunusVertex faunusVertex, final Graph graph,
 
 def Edge getOrCreateEdge(final FaunusEdge faunusEdge, final Vertex blueprintsOutVertex, final Vertex blueprintsInVertex, final Graph graph, final Mapper.Context context) {
     final Edge blueprintsEdge;
-    if (!blueprintsOutVertex.out(faunusEdge.getLabel()).has("id", blueprintsInVertex.getId()))
+    if (!blueprintsOutVertex.out(faunusEdge.getLabel()).has("id", blueprintsInVertex.getId()).hasNext())
         blueprintsEdge = graph.addEdge(null, blueprintsOutVertex, blueprintsInVertex, faunusEdge.getLabel());
     else
         blueprintsEdge = blueprintsOutVertex.outE(faunusEdge.getLabel()).as("here").inV().has("id", blueprintsInVertex.getId()).back("here").next();
