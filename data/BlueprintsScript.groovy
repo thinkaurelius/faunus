@@ -9,10 +9,10 @@ import static com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.Co
 import static com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.LOGGER
 
 /**
- * This script is used to determine vertex uniqueness within a pre-existing graph.
- * If the vertex already exists in the graph, return it.
- * Else, if the vertex does not already exist, create it and return it.
- * Any arbitrary function can be implemented, but the one here implements an index lookup on a unique key.
+ * This script is used to determine vertex and edge uniqueness within a pre-existing graph.
+ * If the vertex/edge already exists in the graph, return it.
+ * Else, if the vertex/edge does not already exist, create it and return it.
+ * Any arbitrary function can be implemented. The two examples provided are typical scenarios.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
  */
@@ -44,11 +44,9 @@ def Vertex getOrCreateVertex(final FaunusVertex faunusVertex, final Graph graph,
 }
 
 def Edge getOrCreateEdge(final FaunusEdge faunusEdge, final Vertex blueprintsOutVertex, final Vertex blueprintsInVertex, final Graph graph, final Mapper.Context context) {
-    final Edge blueprintsEdge;
-    if (!blueprintsOutVertex.out(faunusEdge.getLabel()).has("id", blueprintsInVertex.getId()).hasNext())
-        blueprintsEdge = graph.addEdge(null, blueprintsOutVertex, blueprintsInVertex, faunusEdge.getLabel());
-    else
-        blueprintsEdge = blueprintsOutVertex.outE(faunusEdge.getLabel()).as("here").inV().has("id", blueprintsInVertex.getId()).back("here").next();
+    final Edge blueprintsEdge = !blueprintsOutVertex.out(faunusEdge.getLabel()).has("id", blueprintsInVertex.getId()).hasNext() ?
+        graph.addEdge(null, blueprintsOutVertex, blueprintsInVertex, faunusEdge.getLabel()) :
+        blueprintsOutVertex.outE(faunusEdge.getLabel()).as("here").inV().has("id", blueprintsInVertex.getId()).back("here").next();
     context.getCounter(EDGES_WRITTEN).increment(1l);
 
     // if edge existed or not, add all the properties of the faunusEdge to the blueprintsEdge
