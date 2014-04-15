@@ -15,7 +15,8 @@ h3. Version 0.4.3 (NOT OFFICIALLY RELEASED YET)
 </dependency>
 ```
 
-* No changes to date
+* Added support for incremental edge loading with BlueprintsGraphOutputMapReduce
+* Bumped to support OpenRDF Sesame 2.7.10
 
 h3. Version 0.4.2 (Jan 9, 2014)
 

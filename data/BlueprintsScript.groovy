@@ -1,4 +1,6 @@
+import com.thinkaurelius.faunus.FaunusEdge
 import com.thinkaurelius.faunus.FaunusVertex
+import com.tinkerpop.blueprints.Edge
 import com.tinkerpop.blueprints.Graph
 import com.tinkerpop.blueprints.Vertex
 import org.apache.hadoop.mapreduce.Mapper
@@ -33,9 +35,26 @@ def Vertex getOrCreateVertex(final FaunusVertex faunusVertex, final Graph graph,
         context.getCounter(VERTICES_WRITTEN).increment(1l);
     }
 
+    // if vertex existed or not, add all the properties of the faunusVertex to the blueprintsVertex
     for (final String property : faunusVertex.getPropertyKeys()) {
         blueprintsVertex.setProperty(property, faunusVertex.getProperty(property));
         context.getCounter(VERTEX_PROPERTIES_WRITTEN).increment(1l);
     }
     return blueprintsVertex;
+}
+
+def Edge getOrCreateEdge(final FaunusEdge faunusEdge, final Vertex blueprintsOutVertex, final Vertex blueprintsInVertex, final Graph graph, final Mapper.Context context) {
+    final Edge blueprintsEdge;
+    if (!blueprintsOutVertex.out(faunusEdge.getLabel()).has("id", blueprintsInVertex.getId()))
+        blueprintsEdge = graph.addEdge(null, blueprintsOutVertex, blueprintsInVertex, faunusEdge.getLabel());
+    else
+        blueprintsEdge = blueprintsOutVertex.outE(faunusEdge.getLabel()).as("here").inV().has("id", blueprintsInVertex.getId()).back("here").next();
+    context.getCounter(EDGES_WRITTEN).increment(1l);
+
+    // if edge existed or not, add all the properties of the faunusEdge to the blueprintsEdge
+    for (final String key : faunusEdge.getPropertyKeys()) {
+        blueprintsEdge.setProperty(key, faunusEdge.getProperty(key));
+        context.getCounter(EDGE_PROPERTIES_WRITTEN).increment(1l);
+    }
+    return blueprintsEdge;
 }
