@@ -17,6 +17,7 @@ h3. Version 0.4.3 (NOT OFFICIALLY RELEASED YET)
 
 * Added error handling for invalid RDF parameters
 * Added support for incremental edge loading with BlueprintsGraphOutputMapReduce
+* Bumped to support Titan 0.4.3
 
 h3. Version 0.4.2 (Jan 9, 2014)
 
@@ -29,6 +30,7 @@ h3. Version 0.4.2 (Jan 9, 2014)
 ```
 
 * Added Titan ElasticSearch dependency so its available in the Hadoop job jar
+* Bumped to support Titan 0.4.2
 
 h3. Version 0.4.1 (Nov 24, 2013)
 
