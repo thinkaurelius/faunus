@@ -3,6 +3,7 @@ import com.thinkaurelius.faunus.FaunusVertex
 import com.tinkerpop.blueprints.Edge
 import com.tinkerpop.blueprints.Graph
 import com.tinkerpop.blueprints.Vertex
+import com.tinkerpop.gremlin.java.GremlinPipeline
 import org.apache.hadoop.mapreduce.Mapper
 
 import static com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.Counters.*
@@ -15,6 +16,7 @@ import static com.thinkaurelius.faunus.formats.BlueprintsGraphOutputMapReduce.LO
  * Any arbitrary function can be implemented. The two examples provided are typical scenarios.
  *
  * @author Marko A. Rodriguez (http://markorodriguez.com)
+ * @author Daniel Kuppitz (daniel at thinkaurelius.com)
  */
 def Vertex getOrCreateVertex(final FaunusVertex faunusVertex, final Graph graph, final Mapper.Context context) {
     final String uniqueKey = "name";
@@ -44,10 +46,19 @@ def Vertex getOrCreateVertex(final FaunusVertex faunusVertex, final Graph graph,
 }
 
 def Edge getOrCreateEdge(final FaunusEdge faunusEdge, final Vertex blueprintsOutVertex, final Vertex blueprintsInVertex, final Graph graph, final Mapper.Context context) {
-    final Edge blueprintsEdge = !blueprintsOutVertex.out(faunusEdge.getLabel()).has("id", blueprintsInVertex.getId()).hasNext() ?
-        graph.addEdge(null, blueprintsOutVertex, blueprintsInVertex, faunusEdge.getLabel()) :
-        blueprintsOutVertex.outE(faunusEdge.getLabel()).as("here").inV().has("id", blueprintsInVertex.getId()).back("here").next();
-    context.getCounter(EDGES_WRITTEN).increment(1l);
+    final String edgeLabel = faunusEdge.getLabel();
+    final GremlinPipeline blueprintsEdgePipe = blueprintsOutVertex.outE(edgeLabel).as("e").inV().retain([blueprintsInVertex]).range(0, 1).back("e")
+    final Edge blueprintsEdge;
+
+    if (blueprintsEdgePipe.hasNext()) {
+        blueprintsEdge = blueprintsEdgePipe.next();
+        if (blueprintsEdgePipe.hasNext()) {
+            LOGGER.error("There's more than one edge labeled '" + edgeLabel + "' between vertex #" + blueprintsOutVertex.getId() + " and vertex #" + blueprintsInVertex.getId());
+        }
+    } else {
+        blueprintsEdge = graph.addEdge(null, blueprintsOutVertex, blueprintsInVertex, edgeLabel);
+        context.getCounter(EDGES_WRITTEN).increment(1l);
+    }
 
     // if edge existed or not, add all the properties of the faunusEdge to the blueprintsEdge
     for (final String key : faunusEdge.getPropertyKeys()) {
