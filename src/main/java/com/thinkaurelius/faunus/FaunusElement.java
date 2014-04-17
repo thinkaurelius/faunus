@@ -30,7 +30,7 @@ public abstract class FaunusElement implements Element, WritableComparable<Faunu
         WritableComparator.define(FaunusElement.class, new Comparator());
     }
 
-    protected static final KryoSerializer serialize = new KryoSerializer(true);
+    protected static final KryoSerializer serialize = new KryoSerializer();
 
     protected static final Map<String, String> TYPE_MAP = new HashMap<String, String>() {
         @Override

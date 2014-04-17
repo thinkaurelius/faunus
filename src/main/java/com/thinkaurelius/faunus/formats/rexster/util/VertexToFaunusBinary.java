@@ -21,7 +21,7 @@ public class VertexToFaunusBinary {
 
     private static final ElementIdHandler DEFAULT_ELEMENT_ID_HANDLER = new DefaultElementIdHandler();
     private final ElementIdHandler elementIdHandler;
-    protected static final KryoSerializer serialize = new KryoSerializer(true);
+    protected static final KryoSerializer serialize = new KryoSerializer();
 
     public VertexToFaunusBinary() {
         this(DEFAULT_ELEMENT_ID_HANDLER);
