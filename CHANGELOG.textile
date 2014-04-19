@@ -5,7 +5,7 @@ Faunus: Graph Analytics Engine
 
 h2. Faunus 0.x.y
 
-h3. Version 0.4.3 (NOT OFFICIALLY RELEASED YET)
+h3. Version 0.4.3 (Apr 21, 2014)
 
 ```xml
 <dependency>
