@@ -476,6 +476,36 @@
                         </executions>
                     </plugin>
 
+                    <!-- Deploy jar and jar.asc files to Sonatype, but not zip and tar.bz2s.
+                         Please make this config more concise if you see how to do so.  This
+                         was the least worst that I could do. -->
+                    <plugin>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <version>2.7</version>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>deploy-jars-and-sigs-but-not-zips</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>deploy-file</goal>
+                                </goals>
+                                <configuration>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
+                                    <repositoryId>sonatype-nexus-staging</repositoryId>
+                                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                                    <pomFile>${project.basedir}/pom.xml</pomFile>
+                                    <files>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar,${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar.asc,${project.build.directory}/${project.artifactId}-${project.version}-sources.jar,${project.build.directory}/${project.artifactId}-${project.version}-sources.jar.asc</files>
+                                    <classifiers>javadoc,javadoc,sources,sources</classifiers>
+                                    <types>jar,jar.asc,jar,jar.asc</types>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>wagon-maven-plugin</artifactId>
