@@ -371,6 +371,33 @@
                         </executions>
                     </plugin>
 
+                    <!--
+                       The distribution descriptor includes files written to the build
+                       directory by both the standalone and hadoop-job descriptors.
+                       That's why the execution for the distribution descriptor comes last.
+                    -->
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.4</version>
+                        <executions>
+                            <execution>
+                                <id>assemble-zip-and-tar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>false</attach>
+                                    <finalName>${project.artifactId}</finalName>
+                                    <tarLongFileMode>gnu</tarLongFileMode>
+                                    <descriptors>
+                                        <descriptor>src/assembly/distribution.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
@@ -439,33 +466,43 @@
                                     <workingDirectory>${project.basedir}</workingDirectory>
                                 </configuration>
                             </execution>
-                        </executions>
-                    </plugin>
-
-                    <!--
-                       The distribution descriptor includes files written to the build
-                       directory by both the standalone and hadoop-job descriptors.
-                       That's why the execution for the distribution descriptor comes last.
-                    -->
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <executions>
+                            <!-- GPG plugin can't sign a file.  It can only either:
+                                 * sign all artifacts attached to the project or
+                                 * sign and deploy a file
+                            -->
                             <execution>
-                                <id>build-attached-assemblies</id>
+                                <id>sign-zip</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>single</goal>
+                                    <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <attach>true</attach>
-                                    <finalName>${project.artifactId}</finalName>
-                                    <tarLongFileMode>gnu</tarLongFileMode>
-                                    <descriptors>
-                                        <descriptor>src/assembly/distribution.xml</descriptor>
-                                    </descriptors>
+                                    <executable>gpg</executable>
+                                    <arguments>
+                                        <argument>--detach-sign</argument>
+                                        <argument>--armor</argument>
+                                        <argument>${project.artifactId}-${project.version}.zip</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>sign-tar</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>gpg</executable>
+                                    <arguments>
+                                        <argument>--detach-sign</argument>
+                                        <argument>--armor</argument>
+                                        <argument>${project.artifactId}-${project.version}.tar.bz2</argument>
+                                    </arguments>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
+                                </configuration>
+                            </execution>
+
                         </executions>
                     </plugin>
 
@@ -479,36 +516,6 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- Deploy jar and jar.asc files to Sonatype, but not zip and tar.bz2s.
-                         Please make this config more concise if you see how to do so.  This
-                         was the least worst that I could do. -->
-                    <plugin>
-                        <artifactId>maven-deploy-plugin</artifactId>
-                        <version>2.7</version>
-                        <executions>
-                            <execution>
-                                <id>default-deploy</id>
-                                <phase>none</phase>
-                            </execution>
-                            <execution>
-                                <id>deploy-jars-and-sigs-but-not-zips</id>
-                                <phase>deploy</phase>
-                                <goals>
-                                    <goal>deploy-file</goal>
-                                </goals>
-                                <configuration>
-                                    <file>${project.build.directory}/${project.artifactId}-${project.version}.jar</file>
-                                    <repositoryId>sonatype-nexus-staging</repositoryId>
-                                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                                    <pomFile>${project.basedir}/pom.xml</pomFile>
-                                    <files>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar,${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar.asc,${project.build.directory}/${project.artifactId}-${project.version}-sources.jar,${project.build.directory}/${project.artifactId}-${project.version}-sources.jar.asc</files>
-                                    <classifiers>javadoc,javadoc,sources,sources</classifiers>
-                                    <types>jar,jar.asc,jar,jar.asc</types>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
