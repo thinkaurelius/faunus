@@ -46,6 +46,8 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
 
     private static Map<String, Character> dataTypeToClass = new HashMap<String, Character>();
 
+    private static final Set<String> RESERVED_FRAGMENTS;
+
     private static final char STRING = 's';
     private static final char INTEGER = 'i';
     private static final char FLOAT = 'f';
@@ -61,9 +63,7 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
         dataTypeToClass.put(SailTokens.XSD_NS + "double", DOUBLE);
         dataTypeToClass.put(SailTokens.XSD_NS + "long", LONG);
         dataTypeToClass.put(SailTokens.XSD_NS + "boolean", BOOLEAN);
-    }
 
-    static {
         formats.put("rdf-xml", RDFFormat.RDFXML);
         formats.put("n-triples", RDFFormat.NTRIPLES);
         formats.put("turtle", RDFFormat.TURTLE);
@@ -71,6 +71,12 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
         formats.put("trix", RDFFormat.TRIX);
         formats.put("trig", RDFFormat.TRIG);
         //formats.put("n-quads", NQuadsFormat.NQUADS);
+
+        // exclude fragments which are most likely to interfere in a Titan/Faunus pipeline
+        RESERVED_FRAGMENTS = new HashSet<String>();
+        RESERVED_FRAGMENTS.add("label");
+        //RESERVED_FRAGMENTS.add("type");
+        RESERVED_FRAGMENTS.add("id");
     }
 
     public RDFBlueprintsHandler(final Configuration configuration) throws IOException {
@@ -110,10 +116,27 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
     public String postProcess(final Value resource) {
         if (resource instanceof URI) {
             if (this.useFragments) {
-                return ((URI) resource).getLocalName();
+                return createFragment(resource);
             } else {
                 return resource.stringValue();
             }
+        } else {
+            return resource.stringValue();
+        }
+    }
+
+    /**
+     * Simplifies the lexical representation of a value, in particular by taking the fragment identifier of URIs.
+     * This is a lossy operation; many distinct URIs may map to the same fragment.
+     * Conflicts with reserved tokens are avoided.
+     *
+     * @param resource the Value to map
+     * @return the simplified fragment
+     */
+    private String createFragment(final Value resource) {
+        if (resource instanceof URI) {
+            String frag = ((URI) resource).getLocalName();
+            return RESERVED_FRAGMENTS.contains(frag) ? frag + "_" : frag;
         } else {
             return resource.stringValue();
         }
@@ -152,7 +175,7 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
             subject.setProperty(postProcess(s.getPredicate()), postProcess(s.getObject()));
             subject.setProperty(RDFInputFormat.URI, s.getSubject().stringValue());
             if (this.useFragments)
-                subject.setProperty(RDFInputFormat.NAME, postProcess(s.getSubject()));
+                subject.setProperty(RDFInputFormat.NAME, createFragment(s.getSubject()));
             subject.enablePath(this.enablePath);
             this.queue.add(subject);
         } else if (this.literalAsProperty && (s.getObject() instanceof Literal)) {
@@ -160,7 +183,7 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
             subject.setProperty(postProcess(s.getPredicate()), castLiteral((Literal) s.getObject()));
             subject.setProperty(RDFInputFormat.URI, s.getSubject().stringValue());
             if (this.useFragments)
-                subject.setProperty(RDFInputFormat.NAME, postProcess(s.getSubject()));
+                subject.setProperty(RDFInputFormat.NAME, createFragment(s.getSubject()));
             subject.enablePath(this.enablePath);
             this.queue.add(subject);
         } else {
@@ -169,7 +192,7 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
             subject.reuse(subjectId);
             subject.setProperty(RDFInputFormat.URI, s.getSubject().stringValue());
             if (this.useFragments)
-                subject.setProperty(RDFInputFormat.NAME, postProcess(s.getSubject()));
+                subject.setProperty(RDFInputFormat.NAME, createFragment(s.getSubject()));
             subject.enablePath(this.enablePath);
             this.queue.add(subject);
 
@@ -178,7 +201,7 @@ public class RDFBlueprintsHandler implements RDFHandler, Iterator<FaunusElement>
             object.reuse(objectId);
             object.setProperty(RDFInputFormat.URI, s.getObject().stringValue());
             if (this.useFragments)
-                object.setProperty(RDFInputFormat.NAME, postProcess(s.getObject()));
+                object.setProperty(RDFInputFormat.NAME, createFragment(s.getObject()));
             object.enablePath(this.enablePath);
             this.queue.add(object);
 

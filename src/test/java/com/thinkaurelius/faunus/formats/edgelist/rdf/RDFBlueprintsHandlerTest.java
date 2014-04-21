@@ -58,6 +58,14 @@ public class RDFBlueprintsHandlerTest extends TestCase {
         assertEquals(handler.next().getProperty("name"), "Person");
         assertEquals(((FaunusEdge) handler.next()).getLabel(), "type");
         assertFalse(handler.hasNext());
+
+        handler.parse("<http://dbpedia.org/resource/Abraham_Lincoln> <http://www.w3.org/2000/01/rdf-schema#label> \"Abraham Lincoln\" .");
+        FaunusVertex abe = (FaunusVertex) handler.next();
+        assertEquals(abe.getProperty("name"), "Abraham_Lincoln");
+        assertEquals(handler.next().getProperty("name"), "Abraham Lincoln");
+        // note "label_", not the reserved "label"
+        assertEquals(((FaunusEdge) handler.next()).getLabel(), "label_");
+        assertFalse(handler.hasNext());
     }
 
     public void testAsProperties() throws Exception {

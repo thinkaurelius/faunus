@@ -16,7 +16,7 @@ h3. Version 0.4.3 (Apr 21, 2014)
 ```
 
 * Added error handling for invalid RDF parameters
-* Added support for incremental edge loading with BlueprintsGraphOutputMapReduce
+* Added support for incremental edge loading with @BlueprintsGraphOutputMapReduce@
 * Bumped to support Titan 0.4.3
 
 h3. Version 0.4.2 (Jan 9, 2014)
@@ -69,7 +69,7 @@ h3. Version 0.4.0 (Oct 16, 2013)
 * Added support for @has(key)@ and @hasNot(key)@
 * Migrated from @Query.Compare@ to @Compare@ with Blueprints 2.4.0
 * The variables @hdfs@ and @local@ are available to @gremlin.sh -e@
-* Remove @SequenceFile@ migration model via Faunus (unsustainable)
+* Removed @SequenceFile@ migration model via Faunus (unsustainable)
 
 ==<hr/>==
 
